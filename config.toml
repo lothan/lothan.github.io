@@ -1,0 +1,4 @@
+baseURL = 'https://lothan.github.io/'
+languageCode = 'en-us'
+title = 'Joe Lothan'
+theme = 'hermit'
