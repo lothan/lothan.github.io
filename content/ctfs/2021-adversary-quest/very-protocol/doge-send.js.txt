@@ -1,0 +1,375 @@
+var crypto = require('crypto');
+var tls = require('tls');
+class Networker {    
+    constructor (socket, handler) { 
+	this .socket =socket;
+	this ._packet ={};
+	this ._process =false;
+	this ._state ='HEADER';
+	this ._payloadLength =0;
+	this ._bufferedBytes =0;
+	this .queue =[];
+	this .handler =handler;
+    };
+
+    init(hmac_key, aes_key) {
+	var salty_wow = 'suchdoge4evawow';
+	this .hmac_key =crypto.pbkdf2Sync(hmac_key, salty_wow, 4096, 16, 'sha256');
+	this .aes_key =crypto.pbkdf2Sync(aes_key, salty_wow, 4096, 16, 'sha256');
+	
+	var f1 = (data) => {
+	    this ._bufferedBytes +=data.length;
+	    this.queue.push(data);
+	    this ._process =true;
+	    this._onData();
+	};
+	this.socket.on('data', f1);
+            
+	this.socket.on('error', function (err) { 
+	    console.log('Socket not shibe: ', err);
+	});
+	var dis_handle = this.handler;
+	this.socket.on('served', dis_handle);
+    };
+    
+    _hasEnough(size){
+	if (this ._bufferedBytes  >= size) {
+	    return true;
+	} 
+	this ._process =false;
+	return false;
+    };
+    
+    _readBytes(size){
+	let result ;this ._bufferedBytes -=size;
+	
+	if (size  === this.queue[0].length) {
+	    return this.queue.shift();
+	} 
+
+	if (size < this.queue[0].length) {
+	    result =this.queue[0].slice(0, size);
+	    this.queue[0] =this.queue[0].slice(size);
+	    return result;
+	} 
+
+	result =Buffer.allocUnsafe(size);
+	let offset =0 ;
+	let length ;
+	while (size  > 0) {
+	    length =this.queue[0].length;
+
+	    if (size  >= length) {
+		this.queue[0].copy(result, offset);
+		offset +=length;
+		this.queue.shift();
+	    } else {
+		this.queue[0].copy(result, offset, 0, size);
+		this.queue[0] =this.queue[0].slice(size);
+	    } 
+
+	    size -=length;
+	} 
+	return result;
+    };
+    
+    _getHeader(){
+	let stupid =this._hasEnough(4);
+	if (stupid) {
+	    this._payloadLength =this._readBytes(4).readUInt32BE(0, true);
+	    this._state ='PAYLOAD';
+	} 
+    };
+    
+    _getPayload(){
+	let stupid =this._hasEnough(this._payloadLength);
+	if (stupid) {
+	    let received =this._readBytes(this._payloadLength);
+	    this._parseMessage(received);
+	    this ._state ='HEADER';
+	} 
+    };
+    
+    _onData(data){
+	while (this._process) {
+	    if (this._state  === 'HEADER') {
+		this._getHeader();
+	    } 
+	    if (this._state  === 'PAYLOAD') {
+		this._getPayload();
+	    } 
+	} 
+    };
+    
+    _encrypt(data){
+	var iv = Buffer.alloc(16, 0);
+	var wow_cripter = crypto.createCipheriv('aes-128-cbc', this.aes_key, iv);
+	wow_cripter.setAutoPadding(true);
+	return Buffer.concat([wow_cripter.update(data), wow_cripter.final()]);
+    };
+    
+    _decrypt(data){
+	var iv = Buffer.alloc(16, 0);
+	var wow_decripter = crypto.createDecipheriv('aes-128-cbc', this.aes_key, iv);
+	wow_decripter.setAutoPadding(true);
+	return Buffer.concat([wow_decripter.update(data), wow_decripter.final()]);
+    };
+    
+    send(message){
+	let hmac =crypto.createHmac('sha256', this.hmac_key);
+	let mbuf =this._encrypt(message);
+	hmac.update(mbuf);
+	let chksum =hmac.digest();
+	let buffer =Buffer.concat([chksum, mbuf]);
+	this._header(buffer.length);
+	this._packet.message = buffer;
+	this._send();
+    };
+    
+    _parseMessage(received){
+	var hmac = crypto.createHmac('sha256', this.hmac_key);
+	var checksum = received.slice(0, 32).toString('hex');
+	var message = received.slice(32);
+	hmac.update(message);
+	let stupid =hmac.digest('hex');
+	if (checksum  === stupid) {
+	    var dec_message = this._decrypt(message);
+	    this.socket.emit('served', dec_message);
+	} 
+    };
+    
+    _header(messageLength){
+	this._packet.header ={ length : messageLength };
+    };
+    
+    _send(){
+	var contentLength = Buffer.allocUnsafe(4);
+	contentLength.writeUInt32BE(this._packet.header.length);
+	this.socket.write(contentLength);
+	this.socket.write(this._packet.message);
+	this._packet ={};
+    };
+} 
+
+
+
+doge_cert = `-----BEGIN CERTIFICATE-----
+MIIFITCCAwkCAWUwDQYJKoZIhvcNAQELBQAwTzELMAkGA1UEBhMCVVMxEzARBgNV
+BAgMClNvbWUtU3RhdGUxDTALBgNVBAoMBERvZ2UxDTALBgNVBAsMBERvZ2UxDTAL
+BgNVBAMMBERPR0UwHhcNMjEwMTEzMTYzNjMxWhcNMjIwMTEzMTYzNjMxWjBeMQsw
+CQYDVQQGEwJVUzETMBEGA1UECAwKU29tZS1TdGF0ZTENMAsGA1UEBwwERE9HRTEN
+MAsGA1UECgwERE9HRTENMAsGA1UECwwERE9HRTENMAsGA1UEAwwERE9HRTCCAiIw
+DQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALdOB9lytnk8lWEtuvJ4ZQRPcd8N
+yt0boZfhf+poaZu2AkzSjQffbcvt8mwnCSMUCA0VlnumYR1FpViJhOIMY+5oeSdn
+75I0cRUB6932ueSijzM/jEj9Eaj+V+u2FE2385SBHHE7LStHwqKH+0yBipyilcvS
+jawgZ+7nzHs4gezHtUNlW2+fIwU9tqOMZgutMubHH9N5Qysf+eyGjm28XUeKVYZB
+LhFCgHwMlgcU+RbTFYR7i42r5YWyH99g105+rMKH3Wr5WUfFd44fjM42whD8D4ba
+cmLC2dLWz0PoD1hPc58aHdDgbR0xui2gewIbYq0qJby/xMROgv3rpOw2zYeQTKrm
++CozjLlmGTQ4dCtd0CF9ryZi7e6XM80gDHi962Vx1y0zMlAygbXwEy3fW85ZGIsi
+0ZV8fATa3fkt/EKxJElGdTlGPFTJ6DnI8gX+OzcW2pZ25J2Qva1XyY0KeCIqPxdn
+74PILMTJYMs+doJDMr0clYTMkpyrYtHA0DjcuxNaY5rWLSRHxFrK2rjBCswZrE0g
+2iylPEYn/dndp9h9TUJs0Bu9XqOwB8EQRiOH9+39gzfs/vGf0eguwHBezZBsnhuF
+wYi1EZupoOywoVqxYIE0rTORaHzUrU/mOmivU/Ff4oEFkOGCmVqDjLnFvEK8dnAj
+BwqEbOJj5+lW0Oe7AgMBAAEwDQYJKoZIhvcNAQELBQADggIBABcFAGUu3zE3vTYP
+z7Cog3xnUQpinQrSxTafB87dQSQiSZ8G5/pGJiVJCTJmMOSsckHNSRoB7GMNEWDa
+AhZqDAOummd0uFUok9LtfkQ9BZGsahC5e3xYlONe1b+wazTrkuE64wd/VNyaklfq
+PY8bgTXjApTSQ53rkWoRrRc6eFk55qdIHwuD6iiO2IzcIgFbNgWbE/J6uNwku1tg
+ghC7I1IX/NEqhqWh34C9eSmvuVYFfrPbSIPjuPq7kbwVoafsoXbmd5M1Jxh1EbDL
+OUrIvRd0Jt4VxE3ZuPPVeSg2Mw/Y8dUHADkkti0ekg0RlCbByI602U1bPCxA6/5u
+p7Fg19kE5RWDf6IDxakoDq4dM6lWXzTUYIdiRU/DzXANZ+bgqPl63GnArl2TZMku
+TXQBR/ICR40rOOvCXETfzn5AohsdPuN5s4OFNV2s3SYYDm1PHRUUkihZXMtLWvyd
+VlhJcOOWqUgcKUd06pfjfy7Zi/Vv83tcbyZ3ReWtjm36NlT/iIw0n9pOWULwHa3h
++UGStMANyYH+ziF84C6ZxNTpBtDDBbTctrIGeTGKZsHzYmueLZa07fitW+aVPD5D
+65pss/d5n8k5VCiXN5LJkTG7twH8hEB2usKqKAndRbc6u/IzqI9VwBWmUlNduRDC
+VNjtWQSWI7rQbGpdnKzsFREWMFDv
+-----END CERTIFICATE-----
+`
+
+doge_key = `-----BEGIN RSA PRIVATE KEY-----
+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
+-----END RSA PRIVATE KEY-----
+`
+
+doge_ca = `-----BEGIN CERTIFICATE-----
+MIIFfzCCA2egAwIBAgIUEBelNQtRrw+oLOfVBD0VlxSFoo8wDQYJKoZIhvcNAQEL
+BQAwTzELMAkGA1UEBhMCVVMxEzARBgNVBAgMClNvbWUtU3RhdGUxDTALBgNVBAoM
+BERvZ2UxDTALBgNVBAsMBERvZ2UxDTALBgNVBAMMBERPR0UwHhcNMjEwMTEzMTYz
+NDAzWhcNMzEwMTExMTYzNDAzWjBPMQswCQYDVQQGEwJVUzETMBEGA1UECAwKU29t
+ZS1TdGF0ZTENMAsGA1UECgwERG9nZTENMAsGA1UECwwERG9nZTENMAsGA1UEAwwE
+RE9HRTCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALSEcg15jiFBagWY
+1AijpznZehSsOwhfx7u48Y+DsULt2l7FFlcWngAJfPIlkYWkM1k7ymu8od6pgeRQ
+68lm1f7H1KKGe6yjfvMd9chwMXPOQebsszIdfwKz5joZyM8QlXDe6S7qxCHY28py
+r0YOq13U+dbbcylZdjIUddG/35Rshx6XB0wb9hhbAECeJBu+9r9a5XYxcLMhGm/n
+I/jkDBHVCF6C34rxNYSDb1PwuzO0sTHgzWpe3HdpoKkcx/QrgwVuJbf2h67faoy2
+qIxrUiZJte8O8pE7U/ZbhktevSj1mmGib3Ta2zOFUZV8vkHu9nWqOOftmzyym4nJ
+Xnpkcn2n8aw0pV8jdol2/6cWYi8+uikY3mnPxgo6SvjWLV6lCjXIGQIw0X3d8a4K
+sBt1/ZKAQuSelEUbE8qHIc1mDZ/uESqr3ju3/7+oSfRh2xom0eDUNghdlqwDpP+h
+Ipqgd7g08lskGAmLjbVp0gFXQS3tMJT9IQg47iHV5n7aJTgBaxIJt9nMwaTCMczQ
+3bGeOPphRhpwkkYTG2h+xrTaLJqYk91c8/6F2dRk3DUjEVNoM0t41xiFaAA9H2L0
+/TnI0+GjbEfIm+1+Np/I5ozmYytf6MBWnnbWz9D9lxeHkc5BzRPFzi7pjAv13NGI
+Dx8a9iOvpJ68A/yrem7tWXO4gu9TAgMBAAGjUzBRMB0GA1UdDgQWBBTufgSAQ4wU
+wESlp+0XAyjyGvCbXjAfBgNVHSMEGDAWgBTufgSAQ4wUwESlp+0XAyjyGvCbXjAP
+BgNVHRMBAf8EBTADAQH/MA0GCSqGSIb3DQEBCwUAA4ICAQCsJWnSqLT/d312ulao
+DNCl0hydezeN1GbjefHmxnlBqnIcESyVeQARHoyIc4REpNMeF/Qqqqnikg4mdJj+
+ZVNXxRldAz0Ix6VJPtoZ8EY7/jmD2B6cN9afGm5BABB2hf7d2tk5TLu0fZq71OG2
+8/N1AMETldW9jQF1mQK/IA0WWJHMsafr95tqdWrMJg05JESBEWdQC0IJ9bUk+tcS
+tCHgx24a0aTpilmJuPk3zCU6EQXp06hc2rJ54Y6m+lGc4J6JISeTtmEoGskOomo3
+MxzJtJwzpQywJEoP7LG8U5PKKtrTUHlHJ3bTwEiqrLsiJb/CJY/sGrdkRDxlUEJ6
++Hw874iVPaDidRB9ff3obTA0liVykaAzRlW/AA4RtSPJtbottJ6izBYiNOAdr2qM
+L61KITiRmQ0HKJg8iWgI+Pmm/HJCAhpSb87Ot31O39ifdPmwoPY1OFhgmkhFTpLL
+EzUykVUaBCV1H7kKbigkFwguEOQ4N91/PvJNJUiEBXgwYEM+MeeN62Mv4BfhdioB
++9hsEQ39f5JO9bgRfocQIl9dSu0U0KTu4EsHw2KDx2Qf2UDIhNbhg4OgfdUCw9tF
+QWuuCvUdF/awO01ZFu/STRaaxZOAkOVCjGlFik3nEZXJvjPriFXczDxi6BqwlwA0
+00IVZp4xJVeuVBJcQEknAFJNFw==
+-----END CERTIFICATE-----
+`
+
+servs_cert = `-----BEGIN CERTIFICATE-----
+MIIFITCCAwkCAWQwDQYJKoZIhvcNAQELBQAwTzELMAkGA1UEBhMCVVMxEzARBgNV
+BAgMClNvbWUtU3RhdGUxDTALBgNVBAoMBERvZ2UxDTALBgNVBAsMBERvZ2UxDTAL
+BgNVBAMMBERPR0UwHhcNMjEwMTEzMTYzNTE5WhcNMjUwMTEyMTYzNTE5WjBeMQsw
+CQYDVQQGEwJVUzETMBEGA1UECAwKU29tZS1TdGF0ZTENMAsGA1UEBwwERE9HRTEN
+MAsGA1UECgwERE9HRTENMAsGA1UECwwERE9HRTENMAsGA1UEAwwERE9HRTCCAiIw
+DQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBAO3/RRZW8xZZWP5tZYw1h1GVj9Wy
+vKfy6Nj8G+xvZSW2ryIoDgJOQdd6Fq7LvyC6JqVQhYhv4uPTI6ny63miI1dVInNt
+2zGhNhkcvwCPc6wv/4gNynnPHbXhE/Eu7HWMPfrwyd8deliKIG7i+rdwkklHu1BA
+JMqzYs91UmqUN93o17gRFJJEugN0XI9P2SLL4nQ/XzicaFS+P1zO1VzTF16uhs/F
+uJUMF7YYX0qjApvG55DkuOKkCd0ahZQ4JafTFa7yOhR0ewRrzYdtB+iLYPbrtgUd
+KehTmMp2SNCMVtl87Xvs4JtBgzfZ/kv8IeE1jcaKFZSyTtTuoaX+6aKd85o+i+BT
+uZTKIWNxDn7ZOkn0LtUUr5bRQ2cHpAakJtpjawFXTzH9BA3424PxDAltjgonlFa9
+PoQ4Ix2QPDJOqp0/yYEToTI9UNDRPxwH0vtmSDhtPmmeeadPUPa4MWDD3JFfRUvt
+s41DTXd6zMpU3BeMPcmjLj227iFBNxyueW77V19qRiim9Iq7QgdbqVheWK0Dap5/
+Ks8bELJKWpbIlJTZf11MFtpUoMrmxlveQbwpckEN7qxtr54z7C3odEpxJUHHLSSW
+ErdTTHzr3PNuAxTM6AEzcXv5n64i5Rz5VHrDPksnDOAdNjcuK1iCsoOAic1fhkru
+zxn9gHYFW6fn/sa/AgMBAAEwDQYJKoZIhvcNAQELBQADggIBAE5Go6sdFsZNKIGz
+TIhdL73Q8olRlEmbkEi5gqTvk1xPXZVic70FbhJ0Sqz7J17o2u0LfcvuIy1i6BVj
+F/KInsccq9GFdWNGGQeDkBTL57MkysTr8Su3xdK3HviUHjSGO5dd88VoMYWb6iT1
+CUm7wjSO4CpxmljRi6f5ZCMgTtV3V9v/HPGQLOScV57Q3hRwqCvL2OTAaptgPjp9
+xIuYQ/5AVQfIHmiJxWfVI1kyDcyA2qeOW62uLaAmS+HOZIGvS+3IubNzJUfwpEOP
+/kKOYdk7afu+J2zfHmIno4Tb+7qoiFR1sIiZafWnf7QN80+Ba8CfqkLsIuQI9X3J
+c2c/L5Rb1Qwq5cm9B/Xx+zyxEvYyAdRYvixzWqGpeHVZBgObRxMWnLpCRi6l4ual
+99ieq80D0DOol+BJaX7AlwoLioDsGwbXYN/5PrILySbJ9kvcCaM1l0KrabRcx0W4
+s0t+Kof6rbASNOgDc1XAfOKfPuiit0j1y/Ca/jUIEqHa2p6IWqCXMmZ5hwKXx2Yc
+tEz+qeqMtHSCH05RZaZSk1NPW8LAGP2uEmfW8TgRzBhzk6UekJAoLgpxjeckofHm
+axl7NYnn8bTn4VJaI7geTJqRh9Hi3t/dPD+QQpMzA+ADa2IXQCt9g9YUbaPkj9nk
+a7y5/47kfvD85yufbdPoTNEDq3sU
+-----END CERTIFICATE-----
+`
+
+servs_key = `-----BEGIN RSA PRIVATE KEY-----
+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
+-----END RSA PRIVATE KEY-----
+`
+
+var dson = require('dogeon');
+var fs = require('fs');
+
+var options = {key: doge_key, cert:doge_cert, ca: [doge_ca],
+	       checkServerIdentity: () => { return null; }}
+
+var conn = tls.connect(41414, "veryprotocol.challenges.adversary.zone", options, () => {
+    let networker = new Networker(conn, (data) => {
+	var doge_lingo = data.toString();
+	console.log(dson.parse(doge_lingo).ohmaze)
+    });
+    networker.init('such doge is yes wow', 'such doge is shibe wow');
+    tos = dson.stringify({dogesez: 'do me a favor', ohmaze:"cript(secrit_key,cript_key)"});
+    console.log(tos);
+    networker.send(tos);
+});

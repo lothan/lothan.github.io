@@ -7,6 +7,22 @@ theme = 'hermit'
 	name = "Joe Lothan"
 
 [params]
+    dateform        = "Jan 2, 2006"
+    dateformShort   = "Jan 2"
+    dateformNum     = "2006-01-02"
+    dateformNumTime = "2006-01-02 15:04 -0700"
+
 	[[params.social]]
 		name = "github"
 		url = "https://github.com/lothan"
+
+
+[menu]
+#    maybe some day...
+#    [[menu.main]]
+#        name = "Blog"
+#        url = "blog/"
+
+    [[menu.main]]
+        name = "CTFs"
+        url = "ctfs/"
