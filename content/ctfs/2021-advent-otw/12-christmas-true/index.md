@@ -23,8 +23,8 @@ For the soup, I made a [lentil, apple, and sausage stew](https://cooking.nytimes
 
 ![cooked stew](images/soup-done.jpeg)
 
-For the pancakes, I made traditional American breakfast pancakes, loaded up with butter and maple syrup, when staying at my parents house. Looks like I wasn't the only one who wanted a bite!
+For the pancakes, I made traditional American breakfast pancakes, loaded up with butter and maple syrup. Looks like I wasn't the only one who wanted a bite!
 
 ![a cat trying to eat some pancakes. Classic radare2 developer behavior](images/pancakes.jpeg)
 
-Oh you know this guy uses radare2! 
+This guy looks like a radare2 dev!
