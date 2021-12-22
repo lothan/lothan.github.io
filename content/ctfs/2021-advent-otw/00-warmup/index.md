@@ -57,18 +57,18 @@ Wow that's insane! How does it do that?
 
 When a computer boots, the BIOS looks for a bootable drive. Drives are marked as bootable by having the magic bytes `0xaa55` at the offset `0x1fe`, or 510 bytes in. If the BIOS finds one, it loads up the first sector of the drive (the boot sector) at the address `0x7c00`, points the instruction pointer to the start, and just starts executing x86 instructions.
 
-Tthe processor starts running these instructions in [Real Mode](https://en.wikipedia.org/wiki/Real_mode):
+The processor starts running these instructions in [Real Mode](https://en.wikipedia.org/wiki/Real_mode):
 > an operating mode that all x86 CPUs support. ...
 
 > There is no memory protection, multitasking, or code privilege levels. ...
 
 > for backward compatibility, all x86 CPUs start in real mode when reset
 
-And talk about backward compatibility: Real Mode was the only mode available in the 8086 chip, released in 1979 (!) and used in the original IBM PC. Protected Mode, with virtual memory and basic privilege levels, was released with the 80286 in 1982, but you had to _switch into_ Protected Mode. To this day, CPUs still start in Real Mode. 
+And talk about backward compatibility: Real Mode was the only mode available in the 8086 chip, released in 1979 (!) and used in the original IBM PC. Protected Mode, with virtual memory and basic privilege levels, was released with the 80286 in 1982, but you had to _switch into_ Protected Mode. To this day, x86 CPUs still start in Real Mode. 
 
-[This article](https://github.com/angea/pocorgtfo/blob/master/contents/articles/04-03.pdf) from POC||GTFO is a great overview of Real Mode and how OSes bot (and the [follow up](https://github.com/angea/pocorgtfo/blob/master/contents/articles/05-06.pdf) is great too).
+[This article](https://github.com/angea/pocorgtfo/blob/master/contents/articles/04-03.pdf) from POC||GTFO is a great overview of Real Mode and how OSes boot (and the [follow up](https://github.com/angea/pocorgtfo/blob/master/contents/articles/05-06.pdf) is great too).
 
-So when the PNG boots, this is what the CPU, in "Real Mode", sees:
+So when the PNG boots, this is what the CPU, in 16-bit "Real Mode", sees:
 
 ```
 > objdump -M intel -D -b binary -mi386 -Maddr16,data16 FFbEREBWQAAsjFk.png 
@@ -109,7 +109,7 @@ Disassembly of section .data:
       30:       31 7f 00                xor    WORD PTR [bx+0x0],di
 ```
 
-So it's ugly, and it doesn't do anything, but this PNG header is valid x86 code, and can be run without error by an x86 CPU.
+So it's ugly, and it doesn't do anything, but this PNG header is valid x86 code, and can be run without error by an x86 CPU on boot.
 
 ![a bad pirates of the caribbean meme that says "this is by far the worst x86 code my computer has ever run" ... "but your computer can run it"](images/yarr.jpg)
 
@@ -165,7 +165,7 @@ db 0x7f60
 
 ![Visual mode of initial code the PNG runs](images/r2-start-of-code.png)
 
-We're still just dealing with the first 512 bytes of the PNG, the boot sector part of the file. The loop in the above code, that repeatedly calls `0x7ced`, loads in the rest of the file using the `IN` and `OUT` instructions ([this](https://stackoverflow.com/questions/3215878/what-are-in-out-instructions-in-x86-used-for) was an interesting overview of early CPU I/O). 
+We're still just dealing with the first 512 bytes of the PNG, the boot sector part of the file. The loop in the above code, that repeatedly calls `0x7ced`, loads in the rest of the file using the `IN` and `OUT` instructions ([this](https://stackoverflow.com/questions/3215878/what-are-in-out-instructions-in-x86-used-for) was an interesting read on early CPU I/O). 
 
 There are also two calls to `0x7ce1`, a simple function that prints a string to the display using the [int 0x10](https://en.wikipedia.org/wiki/INT_10H) BIOS interrupt.
 
@@ -281,7 +281,9 @@ So after updating the image with the "You answered:" message and running it agai
 
 ![the final checks for the whole quiz](images/checking-the-quiz.png)
 
-If the comparison succeeds, another value (`[di]`) is XORed at an array starting at `0x7e06`. If the current question number is 7, then presumably our flag printing function (`0x834c`) is called. If not, the "question number" (`0x7e02`) is incremented, the "state" (`0x7e04`) is changed to "printing a question" (1), and the program goes on to print the next question, save to disk, and exit.
+If the comparison succeeds, another value (`[di]`) is XORed at an array starting at `0x7e06`.
+If the current "question number" (`0x7e02`) is less than 7, it is incremented, the "state" (`0x7e04`) is changed to "printing a question" (1), and the program goes on to print the next question.
+If the current question number _is_ 7, then presumably our flag printing function (`0x834c`) is called. 
 
 ### Santa wants milk and cookies, not cheese!
 
@@ -291,9 +293,9 @@ Naturally that's the first thing I did after identifying it, but after running i
 
 ![the flag printing function in radare2](images/flag-printer.png)
 
-The first do...while loop here makes a 0x100 long array of bytes `0x00, 0x01, 0x02 ... 0xfe, 0xff`. Searching for "0x100 bytes encryption" and it looks like the flag is encrypted with RC4, with the encrypted flag located at `0x7c6e`, and the key at `0x7e06`. The key is generated above, from the values at `[di]` across all 8 correct answers to the quiz.
+The first `do...while` loop here makes a 0x100 long array of bytes `0x00, 0x01, 0x02 ... 0xfe, 0xff`. Searching for "0x100 bytes encryption" and it looks like the flag is encrypted with RC4, with the encrypted flag located at `0x7c6e`, and the key at `0x7e06`. The key is generated above, from the values at `[di]` across all 8 correct answers to the quiz.
 
-To me, this was the real beauty of this challenge. At the beginning it was astonishing that a PNG file could run a program, a Christmas quiz, when booted as a hard disk. Near the end, it was astonishing that you actually _have_ to answer all the questions to get the flag.
+To me, this was the real beauty of this challenge. At the beginning it was astonishing that a PNG file could run a program when booted as a hard disk. Near the end, it was astonishing that you actually _have_ to answer all the questions to get the flag. (Or at least most of them, as we'll see)
 
 So lets answer them! (It took me an embarssingly long time to realize that it is _Santa_ asking the questions)
 
@@ -331,11 +333,13 @@ Well, crap. I was breezing through it up until this point. But I searched google
 
 ### Brute force on Quizmas Eve
 
-48 hours before the CTF ended and almost all of the challenges released, I took stock of flags I could try to pick up before time and started working on this warmup challenge again. Around 8 hours before time, I got to this point, where I realized I needed to brute force the last few questions. It had been dark outside for a while and I was fading fast.
+48 hours before the CTF ended with almost all of the AOTW challenges released, I took stock of flags I could try to snag before times up. I'm a n00b at pwn and that was mostly what was remaining, so I started looking at this warmup challenge again. 
 
-There are over half a million 7 digit primes. And question 8 is "What’s my password? (Hint: rockyou)", which has tens of millions.
+Around 8 hours before time, I got to this point, where I realized I needed to brute force the last few questions. It had been dark outside for a while and I was fading fast.
 
-I patched together a very ugly script to brute force the 7-digit prime using the qemu monitor, sending individual keys using the `sendkey` command: 
+There are over half a million 7 digit primes. And question 8 is "What’s my password? (Hint: rockyou)", which has tens of millions of entries.
+
+I quickly patched together a very ugly script to brute force the 7-digit prime using the qemu monitor, sending individual keys using the `sendkey` command: 
 
 ```python
 #!/usr/bin/env python3
@@ -381,9 +385,9 @@ for l in list:
             os.system(cmd)
 ```
 
-This method turned out to be very slow. About 1 guess a second. I broke the list of primes into 10 lists and ran them all in parallel. While that was churning away, I recognized I probably couldn't do rockyou to get Santa's password the same way in time.
+This method turned out to be very slow. About 1 guess a second. So I broke the list of primes into 10 lists and ran them all in parallel. While that was churning away, I recognized I probably couldn't do rockyou to get Santa's password the same way in time.
 
-But if I brute force the answer to question 7, I should have 14 bytes of the 18 byte long key. And cracking the remaining 2^32 bits wouldn't be fast, but would certainly be faster than running rockyou through my existing script. Here was my cracking program written in go:
+But, if I successfully brute force the answer to question 7, I should have 14 bytes of the 18 byte-long key. And cracking the remaining 2^32 bits wouldn't exactly be _fast_, but would certainly be faster than running rockyou through my existing script. Here was my cracking program written in go:
 
 ```go
 package main
@@ -403,7 +407,7 @@ func main() {
 		0x0f,0x53,0x9a,0x42,
 		0x3a,0xf9,0xfe,0x19,
 		0x0c,0xdd,0x1f,0xcb,
-        // Didn't know these last two bytes when I wrote this
+        // Didn't know these last two bytes until after brute forcing question 7
 		0x09,0x9c}
 	
 	fmt.Println(key_prefix)
@@ -436,11 +440,11 @@ func main() {
 }
 ```
 
-I had about 6 hours left. The 10 parallel qemu bruteforcing was going very slow. A quick calculation showed I had about 1/5 chance of guessing Santa's favorite 7 digit prime.
+I had about 6 hours left. The 10 parallel qemu bruteforcing was running, but very slowly. A rough calculation showed I had about 1/10 chance of guessing Santa's favorite 7 digit prime in time.
 
 I needed a Christmas miracle. I'd been nice this year, right? Before going to sleep, I made sure to leave my browser cookies out. And I woke up early in the morning hoping Santa would leave a flag for me under the Christmas spanning tree.
 
-Final runtime:
+### Final runtime:
 
 ```
 QEMU 6.1.0 monitor - type 'help' for more information
@@ -471,4 +475,18 @@ go run crack2.go  7549.51s user 188.92s system 104% cpu 2:02:51.74 total
 
 16 hours total. Not even close.
 
-I don't actually even celebrate Christmas. I'm Jewish. 
+I'm Jewish, I don't even celebrate Christmas.
+
+## Final Notes
+
+This was the best CTF challenge I've done to date. Very unique and well made, it caused me to say "holy shit" aloud many times when solving it. Thanks Retr0id!
+
+![spaghett with "great job!"](images/great-job.png)
+
+Also I found out after the CTF ended, there is a way to run qemu by redirecting stdio to the guest using `-nographic` which would have sped up the final brute forcing significantly. Good to know for next time.
+
+I didn't even go into detail about _how_ the program actually updates the image with the input, or how the CRC32 was recalculated, or the value of `[di]` used for key generation, mostly because I didn't have time to look into it myself. But chatter in the [OverTheWire Chat](https://overthewire.org/information/chat.html) shows that other players used the image generation mechanisms to their advantage to brute force, which is pretty cool.
+
+Finally, there is a cool stunt hacking / demoscene around programming bootloaders and other pieces of software in Real Mode. There are a few POC||GTFO articles with, uhhh... bootloader POCs to check out ([1](https://github.com/angea/pocorgtfo/blob/master/contents/articles/03-08.pdf),[2](https://github.com/angea/pocorgtfo/blob/master/contents/articles/11-04.pdf)).
+
+I also wrote my first crappy [program in real mode](https://github.com/lothan/DOSword) recently, learned a lot from it and found it surprisingly fun. [Programming Boot Sector Games by Oscar Toledo D.](https://www.amazon.com/Programming-Sector-Games-Toledo-Gutierrez/dp/0359816312) (aka [nanochess](https://nanochess.org/)) is a good intro. I was going to try to make a [pentomino game](https://en.wikipedia.org/wiki/Pentomino#Constructing_rectangular_dimensions) bootloader or maybe a [peg solitaire](https://en.wikipedia.org/wiki/Peg_solitaire) one but might not have the time, so if this stuff interests you and you need a side-project, you should try it out!
