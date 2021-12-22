@@ -17,6 +17,11 @@ theme = ['hugo-video', 'hermit']
 		name = "github"
 		url = "https://github.com/lothan"
 
+    [[params.social]]
+		name = "twitter"
+		url = "https://twitter.com/ertplusy76p"
+
+
 
 [menu]
 #    maybe some day...
