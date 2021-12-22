@@ -472,6 +472,3 @@ go run crack2.go  7549.51s user 188.92s system 104% cpu 2:02:51.74 total
 16 hours total. Not even close.
 
 I don't actually even celebrate Christmas. I'm Jewish. 
-
-## Final Notes
-
