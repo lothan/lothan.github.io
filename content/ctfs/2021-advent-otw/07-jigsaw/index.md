@@ -1,5 +1,5 @@
 ---
-title: "Day 07 - Jigsaw"
+title: "Day 7 - Jigsaw"
 date: 2021-12-19T11:14:23-06:00
 ---
 
@@ -19,7 +19,7 @@ We're given a tar file of 667 jigsaw pieces, extracting and taking a look:
 
 ```
 07-jigsaw > tar xvf jigsaw_pieces.tar.xz
-'jigsaw_pieces/
+jigsaw_pieces/
 jigsaw_pieces/e037a1d80fcfd3155bdbbbcfff210893427316c741fe0f05825a6e14beb9b1e3.png
 jigsaw_pieces/9f8e0c2439b835084b048b43e81f25b37c13eb2ad945145af23bc0668eda0b60.png
 jigsaw_pieces/dc87fa39086e30bc68c2f11377371f93f38e84b7eaaeef2f255114d733e266a3.png

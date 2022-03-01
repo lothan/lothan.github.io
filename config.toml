@@ -15,11 +15,11 @@ theme = ['hugo-video', 'hermit']
 
 	[[params.social]]
 		name = "github"
-		url = "https://github.com/lothan"
+		url = "https://github.com/ert-plus"
 
     [[params.social]]
 		name = "twitter"
-		url = "https://twitter.com/ertplusy76p"
+		url = "https://twitter.com/ert_plus"
 
 
 

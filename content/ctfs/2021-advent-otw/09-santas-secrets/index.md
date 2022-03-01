@@ -1,5 +1,5 @@
 ---
-title: "Day 09 - Santas Secrets"
+title: "Day 9 - Santas Secrets"
 date: 2021-12-19T17:35:43-06:00
 ---
 
