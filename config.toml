@@ -15,7 +15,7 @@ theme = ['hugo-video', 'hermit']
 
 	[[params.social]]
 		name = "github"
-		url = "https://github.com/ert-plus"
+		url = "https://github.com/lothan"
 
     [[params.social]]
 		name = "twitter"
