@@ -4,7 +4,7 @@ title = 'Joe Lothan'
 theme = ['hugo-video', 'hermit-v2']
 
 [author]
-	name = "Joe Lothan"
+    name = "Joe Lothan"
 
 [params]
     dateform        = "Jan 2, 2006"
@@ -12,22 +12,15 @@ theme = ['hugo-video', 'hermit-v2']
     dateformNum     = "2006-01-02"
     dateformNumTime = "2006-01-02 15:04 -0700"
 
-	[[params.social]]
-		name = "github"
-		url = "https://github.com/lothan"
+    [[params.socialLinks]]
+        name = "github"
+        url = "https://github.com/lothan"
 
-    [[params.social]]
-		name = "twitter"
-		url = "https://twitter.com/ert_plus"
+    [[params.socialLinks]]
+        name = "twitter"
+        url = "https://twitter.com/ert_plus"
 
-
-
-[menu]
-#    maybe some day...
-#    [[menu.main]]
-#        name = "Blog"
-#        url = "blog/"
-
-    [[menu.main]]
-        name = "CTFs"
-        url = "ctfs/"
+    [menu]
+        [[menu.main]]
+            name = "CTFs"
+            url = "ctfs/"
