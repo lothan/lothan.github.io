@@ -1,13 +1,12 @@
 baseURL = 'https://joe.lothan.net/'
 languageCode = 'en-us'
 title = 'Joe Lothan'
-theme = ['hugo-video', 'hermit']
+theme = ['hugo-video', 'hermit-v2']
 
 [author]
 	name = "Joe Lothan"
 
 [params]
-    customCSS       = ["css/custom.css"]
     dateform        = "Jan 2, 2006"
     dateformShort   = "Jan 2"
     dateformNum     = "2006-01-02"
