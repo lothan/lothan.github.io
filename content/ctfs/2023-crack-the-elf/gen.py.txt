@@ -1,0 +1,116 @@
+from binaryninja import *
+
+# this is ugly and I feel bad...
+def get_used_32bit_regs(llil: LowLevelILInstruction) -> list[str]:
+    ops = llil.operands
+    match ops:
+        case [left, right]:
+            if type(left) == ILRegister:
+                return get_used_32bit_regs(right)
+            else:
+                return get_used_32bit_regs(left) + get_used_32bit_regs(right)
+        case [leaf]:
+            if type(leaf) == ILRegister and leaf.info.size == 4:
+                return [str(leaf)]
+            else:
+                return []
+        case other:
+            print(f"ERROR WITH 32 BIT REGS {other}")
+            return []
+
+def get_64bit_reg(short_reg: str) -> str:
+    if short_reg[0] == "e" and len(short_reg) == 3:
+        return "r" + short_reg[1:]
+    if short_reg[-1] == "d" and len(short_reg) == 4:
+        return short_reg[:-1]
+    return f"\n\n# Error! Cannot find 64 bit register for {short_reg}"
+
+def generate_smt(llil: LowLevelILInstruction) -> str:
+    if hasattr(llil, "operands"):
+        ops = llil.operands
+    match type(llil):
+        case lowlevelil.LowLevelILReg \
+             | lowlevelil.ILRegister:
+            return str(llil)
+        case lowlevelil.LowLevelILZx:
+            return f"BV(value={llil.src.constant}, width={llil.size * 8})"
+        case lowlevelil.LowLevelILXor:
+            return f"BVXor({generate_smt(ops[0])}, {generate_smt(ops[1])})"
+        case lowlevelil.LowLevelILLsr:
+            return f"BVLShr({generate_smt(ops[0])}, {generate_smt(ops[1])})"
+        case lowlevelil.LowLevelILLsl:
+            return f"BVLShl({generate_smt(ops[0])}, {generate_smt(ops[1])})"
+        case lowlevelil.LowLevelILAdd:
+            return f"BVAdd({generate_smt(ops[0])}, {generate_smt(ops[1])})"
+        case lowlevelil.LowLevelILSub:
+            return f"BVSub({generate_smt(ops[0])}, {generate_smt(ops[1])})"
+        case lowlevelil.LowLevelILConst:
+            # hacky I know...
+            if llil.constant < 0:
+                return f"BV(value={llil.constant + (2 ** (llil.size * 8))}, width={llil.size * 8})"
+            else:
+                return f"BV(value={llil.constant}, width={llil.size * 8})"
+        case lowlevelil.LowLevelILPop:
+            return f"stack.pop()"
+        case lowlevelil.LowLevelILPush:
+            return f"stack.append({generate_smt(ops[0])})"
+        case lowlevelil.LowLevelILSetReg:
+            return f"{generate_smt(ops[0])} = {generate_smt(ops[1])}"
+        case other: 
+            return f"# {other.__name__} : Unsupported instruction"
+
+with open("./tiny_turb0", "rb") as f:
+    raw = f.read(0x12d)
+    
+preamble = """
+from pysmt.shortcuts import *
+from pysmt.typing import BVType
+
+stack = []
+
+# Define registers as Symbols to solve for or with fixed initial values
+rax = Symbol("rax", BVType(width=64))
+rdx = BV(value=0, width=64)
+r10 = BV(value=0, width=64)
+"""
+
+print(preamble)
+
+important_bits = raw[0x89:0x101]
+
+with load(source=important_bits, options={'loader.architecture' : 'x86_64'}) as bv:
+    insts = list(bv.llil_instructions)
+    for i, llil in enumerate(list(bv.llil_instructions)):
+        print(f"# {str(llil)}")
+
+        # convert between 32 and 64 if needed
+        if llil.size == 4:
+            short_regs = list(set(get_used_32bit_regs(llil)))
+            for short_reg in short_regs:
+                long_reg = get_64bit_reg(short_reg)
+                print(f"{short_reg} = BVExtract({long_reg}, start=0, end=31)")
+
+            print(generate_smt(llil))
+            
+            short_reg = str(llil.operands[0])
+            long_reg = get_64bit_reg(short_reg)
+            print(f"{long_reg}_upper = BVExtract({long_reg}, start=32)")
+            print(f"{long_reg} = BVConcat({long_reg}_upper, {short_reg})")
+            
+        else:
+            # otherwise just use 64 bits
+            print(generate_smt(llil))
+
+        print()
+
+epilogue = """
+# Specify what the register output *should* be
+formula = Equals(r10, SBV(value=-6350842583938256283, width=64))
+
+# Then solve!
+print("is_sat", is_sat(formula))
+model = get_model(formula)
+print(model)
+"""
+
+print(epilogue)

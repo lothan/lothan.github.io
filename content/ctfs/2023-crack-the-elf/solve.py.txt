@@ -1,0 +1,218 @@
+
+from pysmt.shortcuts import *
+from pysmt.typing import BVType
+
+stack = []
+
+# Define registers as Symbols to solve for or with fixed initial values
+rax = Symbol("rax", BVType(width=64))
+rdx = BV(value=0, width=64)
+r10 = BV(value=0, width=64)
+
+# rbx = rax
+rbx = rax
+
+# rbx = rbx u>> 0x20
+rbx = BVLShr(rbx, BV(value=32, width=64))
+
+# rax = rax - rbx
+rax = BVSub(rax, rbx)
+
+# r10d = 0x409ab347
+r10d = BV(value=1083880263, width=32)
+r10_upper = BVExtract(r10, start=32)
+r10 = BVConcat(r10_upper, r10d)
+
+# edx = 0xdeadcafe
+edx = BV(value=3735931646, width=32)
+rdx_upper = BVExtract(rdx, start=32)
+rdx = BVConcat(rdx_upper, edx)
+
+# r10 = r10 ^ rdx
+r10 = BVXor(r10, rdx)
+
+# r9 = 0
+r9 = BV(value=0, width=64)
+
+# rcx = 0
+rcx = BV(value=0, width=64)
+
+# rdx = 0
+rdx = BV(value=0, width=64)
+
+# goto 10 @ 0x21
+# LowLevelILGoto : Unsupported instruction
+for i in range(0x20):
+    # rdx = rdx + r10
+    rdx = BVAdd(rdx, r10)
+
+    # push(rbx)
+    stack.append(rbx)
+
+    # ebx = ebx << 4
+    ebx = BVExtract(rbx, start=0, end=31)
+    ebx = BVLShl(ebx, BV(value=4, width=32))
+    rbx_upper = BVExtract(rbx, start=32)
+    rbx = BVConcat(rbx_upper, ebx)
+
+    # ebx = ebx - 0x3f3f3f40
+    ebx = BVExtract(rbx, start=0, end=31)
+    ebx = BVAdd(ebx, BV(value=3233857728, width=32))
+    rbx_upper = BVExtract(rbx, start=32)
+    rbx = BVConcat(rbx_upper, ebx)
+
+    # rsi = pop
+    rsi = stack.pop()
+
+    # push(rsi)
+    stack.append(rsi)
+
+    # esi = esi + edx
+    esi = BVExtract(rsi, start=0, end=31)
+    edx = BVExtract(rdx, start=0, end=31)
+    esi = BVAdd(esi, edx)
+    rsi_upper = BVExtract(rsi, start=32)
+    rsi = BVConcat(rsi_upper, esi)
+
+    # ebx = ebx ^ esi
+    esi = BVExtract(rsi, start=0, end=31)
+    ebx = BVExtract(rbx, start=0, end=31)
+    ebx = BVXor(ebx, esi)
+    rbx_upper = BVExtract(rbx, start=32)
+    rbx = BVConcat(rbx_upper, ebx)
+
+    # # rsi = pop
+    rsi = stack.pop()
+
+    # push(rsi)
+    stack.append(rsi)
+
+    # esi = esi u>> 5
+    esi = BVExtract(rsi, start=0, end=31)
+    esi = BVLShr(esi, BV(value=5, width=32))
+    rsi_upper = BVExtract(rsi, start=32)
+    rsi = BVConcat(rsi_upper, esi)
+
+    # esi = esi - 0x53545355
+    esi = BVExtract(rsi, start=0, end=31)
+    esi = BVAdd(esi, BV(value=2896932011, width=32))
+    rsi_upper = BVExtract(rsi, start=32)
+    rsi = BVConcat(rsi_upper, esi)
+
+    # ebx = ebx ^ esi
+    esi = BVExtract(rsi, start=0, end=31)
+    ebx = BVExtract(rbx, start=0, end=31)
+    ebx = BVXor(ebx, esi)
+    rbx_upper = BVExtract(rbx, start=32)
+    rbx = BVConcat(rbx_upper, ebx)
+
+    # push(rax)
+    stack.append(rax)
+
+    # eax = eax + ebx
+    eax = BVExtract(rax, start=0, end=31)
+    ebx = BVExtract(rbx, start=0, end=31)
+    eax = BVAdd(eax, ebx)
+    rax_upper = BVExtract(rax, start=32)
+    rax = BVConcat(rax_upper, eax)
+
+    # rdi = pop
+    rdi = stack.pop()
+
+    # rbx = pop
+    rbx = stack.pop()
+
+    # push(rax)
+    stack.append(rax)
+
+    # eax = edi
+    edi = BVExtract(rdi, start=0, end=31)
+    eax = edi
+    rax_upper = BVExtract(rax, start=32)
+    rax = BVConcat(rax_upper, eax)
+
+    # push(rdi)
+    stack.append(rdi)
+
+    # edi = edi << 4
+    edi = BVExtract(rdi, start=0, end=31)
+    edi = BVLShl(edi, BV(value=4, width=32))
+    rdi_upper = BVExtract(rdi, start=32)
+    rdi = BVConcat(rdi_upper, edi)
+
+    # edi = edi - 0x21523f22
+    edi = BVExtract(rdi, start=0, end=31)
+    edi = BVAdd(edi, BV(value=3735929054, width=32))
+    rdi_upper = BVExtract(rdi, start=32)
+    rdi = BVConcat(rdi_upper, edi)
+
+    # eax = eax + edx
+    eax = BVExtract(rax, start=0, end=31)
+    edx = BVExtract(rdx, start=0, end=31)
+    eax = BVAdd(eax, edx)
+    rax_upper = BVExtract(rax, start=32)
+    rax = BVConcat(rax_upper, eax)
+
+    # edi = edi ^ eax
+    edi = BVExtract(rdi, start=0, end=31)
+    eax = BVExtract(rax, start=0, end=31)
+    edi = BVXor(edi, eax)
+    rdi_upper = BVExtract(rdi, start=32)
+    rdi = BVConcat(rdi_upper, edi)
+
+    # rax = pop
+    rax = stack.pop()
+
+    # eax = eax u>> 5
+    eax = BVExtract(rax, start=0, end=31)
+    eax = BVLShr(eax, BV(value=5, width=32))
+    rax_upper = BVExtract(rax, start=32)
+    rax = BVConcat(rax_upper, eax)
+
+    # eax = eax - 0x3f013f02
+    eax = BVExtract(rax, start=0, end=31)
+    eax = BVAdd(eax, BV(value=3237921022, width=32))
+    rax_upper = BVExtract(rax, start=32)
+    rax = BVConcat(rax_upper, eax)
+
+    # edi = edi + eax
+    edi = BVExtract(rdi, start=0, end=31)
+    eax = BVExtract(rax, start=0, end=31)
+    edi = BVAdd(edi, eax)
+    rdi_upper = BVExtract(rdi, start=32)
+    rdi = BVConcat(rdi_upper, edi)
+
+    # rax = pop
+    rax = stack.pop()
+
+    # ebx = ebx + edi
+    edi = BVExtract(rdi, start=0, end=31)
+    ebx = BVExtract(rbx, start=0, end=31)
+    ebx = BVAdd(ebx, edi)
+    rbx_upper = BVExtract(rbx, start=32)
+    rbx = BVConcat(rbx_upper, ebx)
+
+# # rcx = rcx + 1
+# rcx = BVAdd(rcx, BV(value=1, width=64))
+
+# # if (rcx != 0x20) then 10 @ 0x21 else 42 @ 0x6e
+# # LowLevelILIf : Unsupported instruction
+
+# r10 = rax
+r10 = rax
+
+# r10 = r10 << 0x20
+r10 = BVLShl(r10, BV(value=32, width=64))
+
+# # undefined
+# LowLevelILUndef : Unsupported instruction
+
+
+# Specify what the register output *should* be
+formula = Equals(rax, BV(value=0x475f35ee, width=64))
+
+# Then solve!
+print("is_sat", is_sat(formula))
+model = get_model(formula)
+print(model)
+
