@@ -18,9 +18,13 @@ theme = ['hugo-video', 'hermit-v2']
 
     [[params.socialLinks]]
         name = "twitter"
-        url = "https://twitter.com/ert_plus"
+        url = "https://twitter.com/joe_lothan"
+
+    [[params.socialLinks]]
+        name = "flag"
+        url = "https://www.wechall.net/profile/ert"
 
     [menu]
         [[menu.main]]
-            name = "CTFs"
+            name = "CTF"
             url = "ctfs/"
