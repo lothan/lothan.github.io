@@ -1,4 +1,3 @@
-
 from pysmt.shortcuts import *
 from pysmt.typing import BVType
 

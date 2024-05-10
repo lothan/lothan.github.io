@@ -119,7 +119,7 @@ rdx = BV(value=0, width=64)
 r10 = BV(value=0, width=64)
 ```
 
-add the 32 iteration loop manually (If and Goto instructions are not supported in code gen), and append the code to actually solve for the expected value ([full code](./gen.py)):
+add the 32 iteration loop manually (If and Goto instructions are not supported in code gen), and append the code to actually solve for the expected value ([full code](./gen.py.txt)):
 
 ```python
 # r10 = rax
@@ -139,7 +139,7 @@ model = get_model(formula)
 print(model)
 ```
 
-We can finally run the (slightly edited) [generated code](./solve.py) to solve for the correct value. This took about 4.5 hours on my machine: 
+We can finally run the (slightly edited) [generated code](./solve.py.txt) to solve for the correct value. This took about 4.5 hours on my machine: 
 
 ```bash
 $ python solve_tiny.py
