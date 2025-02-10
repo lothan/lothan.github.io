@@ -28,3 +28,7 @@ theme = ['hugo-video', 'hermit-v2']
         [[menu.main]]
             name = "CTF"
             url = "ctfs/"
+
+        [[menu.main]]
+            name = "Blog"
+            url = "blog/"
