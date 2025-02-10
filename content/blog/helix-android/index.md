@@ -111,7 +111,7 @@ emu64a:/data/local/tmp # cat .cache/helix/helix.log
 Helix loads the relevant tree-sitter grammer as a dynamic library and it requires `libc++_shared.so`.
 `libc++_shared.so` is part of the Android NDK and is often bundled in apps but doesn't exist natively on the Android system.
 
-So let's find the relevant `libc++_shared.so` on the host system, `adb push` it into our emulated Android, and set `LD_PRELOAD_PATH` to point the Android linker to load the library:
+So let's find the relevant `libc++_shared.so` on the host system, `adb push` it into our emulated Android, and set `LD_LIBRARY_PATH` to point the Android linker to load the library:
 ```text
 ~/android-ndk-r27c$ find . -name libc++_shared.so
 ./toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/i686-linux-android/libc++_shared.so
@@ -139,7 +139,7 @@ The downside being, of course, that you will need to `export HOME` and `LD_LIBRA
 
 Normally you could add these exports to your `.*shrc`, but on Android your `adb shell` runs `mksh`, whose sole rc file is in the read-only partition `/system/etc/mkshrc`.
 
-You might want to boot your emulator as a [`writable-system` and disable verity](https://stackoverflow.com/questions/58010655/is-adb-remount-broken-on-android-api-29/64989222#64989222) in order to edit this file (and while you're add it add the `hx`'s binary location to your `PATH`).
+You might want to boot your emulator as a [`writable-system` and disable verity](https://stackoverflow.com/questions/58010655/is-adb-remount-broken-on-android-api-29/64989222#64989222) in order to edit this file (and while you're at it, add the `hx` binary location to your `PATH`).
 
-And then you can use helix to edit any file on your filesystem :)
+And then you can use helix to edit any file on your Android filesystem :)
 Happy Hacking!
