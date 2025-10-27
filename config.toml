@@ -1,7 +1,7 @@
 baseURL = 'https://joe.lothan.net/'
 languageCode = 'en-us'
 title = 'Joe Lothan'
-theme = ['hugo-video', 'hermit-v2']
+theme = ['albers']
 
 [author]
     name = "Joe Lothan"
