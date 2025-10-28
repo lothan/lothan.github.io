@@ -1,6 +1,7 @@
 ---
 title: "Day 0 - Warmup"
 date: 2021-12-20T15:51:25-06:00
+highlighted: true
 ---
 
 ## Challenge Description
