@@ -17,10 +17,6 @@ theme = ['albers']
         url = "https://github.com/lothan"
 
     [[params.socialLinks]]
-        name = "twitter"
-        url = "https://twitter.com/joe_lothan"
-
-    [[params.socialLinks]]
         name = "flag"
         url = "https://www.wechall.net/profile/ert"
 
@@ -32,3 +28,7 @@ theme = ['albers']
         [[menu.main]]
             name = "Blog"
             url = "blog/"
+
+        [[menu.main]]
+            name = "Links"
+            url = "links"
