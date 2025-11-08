@@ -10,4 +10,4 @@ showDate: false
 - [LinkedIn](https://www.linkedin.com/in/joe-lothan-0928a1324/)
 
 
-## 88x31
+[![ert's 88x31](./88x31/ert.png)](https://joe.lothan.net)[![ezri 88x31](./88x31/ezri.png)](https://ezrizhu.com)
