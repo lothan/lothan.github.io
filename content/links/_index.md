@@ -4,11 +4,11 @@ draft: false
 showDate: false
 ---
 
-### Personal
+Personal:
 
-- [Github](https://github.com/lothan)
-- [LinkedIn](https://www.linkedin.com/in/joe-lothan-0928a1324/)
 
+Cool sites:
+- https://ciechanow.ski/gps/
 
 [![ert's 88x31](./88x31/ert.png)](https://joe.lothan.net)
 [![ezri 88x31](./88x31/ezri.png)](https://ezrizhu.com)
@@ -20,3 +20,6 @@ showDate: false
 [![swans](./88x31/swans.gif)](https://www.youtube.com/watch?v=Oxtb4pVbCtI)
 [![linux](./88x31/linux.gif)](https://kernel.org)
 [![archlinux](./88x31/archlinux.gif)](https://archlinux.org/)
+[![software github link](./88x31/software.gif)](https://github.com/lothan)
+[![jobs linkedin link](./88x31/jobs.gif)](https://www.linkedin.com/in/joe-lothan-0928a1324/)
+[![homestarrunner](./88x31/homestar.gif)](https://homestarrunner.com)
