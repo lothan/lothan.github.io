@@ -4,11 +4,10 @@ draft: false
 showDate: false
 ---
 
-Personal:
+<!-- Personal: -->
 
-
-Cool sites:
-- https://ciechanow.ski/gps/
+<!-- Cool sites: -->
+<!-- - https://ciechanow.ski/gps/ -->
 
 [![ert's 88x31](./88x31/ert.png)](https://joe.lothan.net)
 [![ezri 88x31](./88x31/ezri.png)](https://ezrizhu.com)
