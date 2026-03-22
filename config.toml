@@ -30,5 +30,5 @@ theme = ['albers']
             url = "blog/"
 
         [[menu.main]]
-            name = "Links"
-            url = "links"
+            name = "Lists"
+            url = "lists"
