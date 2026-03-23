@@ -11,7 +11,7 @@ buttons:
     url: ""
   - image: "88x31/swans.gif"
     alt: "Swans"
-    url: "https://www.youtube.com/watch?v=6qDq9eGUmMI"
+    url: "https://www.youtube.com/watch?v=JlqBcXh231g"
   - image: "88x31/margin.png"
     alt: "Margin"
     url: "https://margin.re/"
