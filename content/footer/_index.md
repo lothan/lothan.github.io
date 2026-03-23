@@ -38,5 +38,8 @@ buttons:
     url: ""
   - image: "88x31/play_ctf.gif"
     alt: "Play CTF"
-    url: "overthewire.org"
+    url: "https://overthewire.org"
+  - image: "88x31/transnow2.gif"
+    alt: "trans rights now"
+    url: ""
 ---
