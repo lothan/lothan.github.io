@@ -34,7 +34,7 @@ buttons:
     url: "https://www.firefox.com/"
   - image: "88x31/rss.gif"
     alt: "RSS"
-    url: "feed://joe.lothan.net/index.xml"
+    url: "https://joe.lothan.net/index.xml"
   - image: "88x31/i-heart-flareon.gif"
     alt: "I <3 flareon"
     url: "https://flare-on.com/"
