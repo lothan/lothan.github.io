@@ -1,5 +1,5 @@
 ---
-title: "A Real Ticker-tape Parade for the Knicks"
+title: "Making Ticker-tape for the Knicks Parade"
 date: 2026-06-18
 ---
 
@@ -19,13 +19,13 @@ Stock tickers, so named for their loud sound when running, were machines that co
 Stock tickers printed the information on little slips of paper: ticker-tape.
 
 Busy days on Wall Street would accumulate huge volumes of ticker-tape. 
-So when the parade for the dedication of the Statue of Liberty passed through the Financial District on October 28, 1886, traders threw their masses of ticker-tape out the window as makeshift celebratory streamers and the ticker-tape parade was born.
+So when the parade for the dedication of the Statue of Liberty passed through the Financial District on October 28, 1886, traders threw their masses of ticker-tape out the window as makeshift streamers and the ticker-tape parade was born.
 
 <!-- ![Ticker-tape parade for the Apollow 11 astronauts](./Apollo_11_ticker_tape_parade.jpg) -->
 
 Ticker-tape stopped being used in the 1960s when computerized stock information took over, though it's impact on finance lives on;
-the LED stock ticker crawls is still in use in Times Square; 
-abbreviations of company names for the tape became the now ubiquitous stock symbol (e.g. GOOG for Google);
+the LED stock ticker crawls are still in use in Times Square and elsewhere; 
+abbreviations of company names for the tape has became the now ubiquitous stock symbol (e.g. GOOG for Google);
 and the NYSE still calls different streams of trade data "tapes."
 
 {{<figure src="./Apollo_11_ticker_tape_parade.jpg" alt="Ticker-tape parade for the Apollo 11 astronauts" caption="Ticker-tape for the Apollo 11 astronauts, August 13, 1969, Wikimedia" >}}
@@ -43,7 +43,7 @@ I had a few rough requirements for final product:
 - make as much of it as I could
 
 The problem was I had almost no time to do this.
-The idea came to me Monday afternoon but I had a 24 hour trip from Tuesday til Wednesday early evening.
+The idea came to me Monday afternoon but I had a 24 hour road trip Tuesday to Wednesday early evening.
 I really only had Monday evening, Wednesday evening, and Thursday morning before the parade to work on it.
 
 But I did have some experience printing long strips of paper.
@@ -53,7 +53,7 @@ They made a great interface so it was easy to print arbitrary text, images, or r
 The receipt printer was the perfect medium for this project (after all it is a machine used to print financial information on slips of paper).
 It also prints very fast and in great volumes. 
 Most importantly, I had access to one.
-As a Recurse alumni, I could return to hub and start prototyping immediately using Alex and Julia's API.
+As a Recurse alumni, I could return to hub and start prototyping immediately using Alex and Julia's API. So Monday afternoon, I ran straight over.
 
 <!-- One could argue that the real revolution in trading was from non-realtime to realtime data in the late 19th century. -->
 <!-- The rise of high frequency trading in the last few decades is really a revolution in computerized trading, the  just a drift in the meaning of "realtime." -->
@@ -67,8 +67,10 @@ For trades executed on the exchange, ticker-tape prints the stock symbol above a
 
 Stocks traditionally trade in groups of 100 known as "lots."
 If one lot was traded, just the price that lot traded at would be printed.
+So reading the tape above, the stock BCX traded one lot at the price $26.75.
 
 If multiple lots were traded, then `<number of lots> s <lot price>` would be printed.
+So again, above, MGM traded two lots (200 stocks) at $28 a share.
 Trades would come as they were executed, in chronological order.
 Currently stock prices are rounded to the nearest cent, but historically they were rounded to the nearest eighth of a cent. For old school aesthetics, I wanted to show prices as eigthts of a cent.
 
@@ -83,7 +85,7 @@ The New York Stock Exchange sells access to the data of all transactions it cond
 My friend Frank pointed me to [Alpaca](https://alpaca.markets/) and their easy to use [Market Data API](https://docs.alpaca.markets/us/docs/about-market-data-api), reselling the data from the exchanges.
 The free tier only gives you 200 API calls a minute, but I just needed to download *some* data only once, so even with the limit it should be more than enough.
 
-Writing a custom trade downloader that limits my API requests, I was able to download a full day of trading data on NYSE in under an hour for free:
+Writing a custom trade downloader and limiting my API requests, I was able to download a full day of trading data on NYSE in under an hour for free:
 
 ```
 $ python ticker_tape.py --all-nyse nyse_symbols.txt --start 2026-06-12 --raw > trades_unsorted.csv
@@ -149,7 +151,7 @@ Then, after a batch of trades are placed in each column, it renders each trade i
 The major ESC/POS commands I used were:
 - 90° Rotation: ESC V 1 (`0x1b 0x56 0x01`)
 
-This made everything easy to print "down" the receipt instead of "across" it. I didn't need to work with custom fonts or images, this command just rotates the text before printing it. I could keep using the built in font.
+This made everything easy to print "down" the receipt instead of "across" it. I didn't need to work with custom fonts or images, this command just rotates the text before printing it.
 
 - Custom Glyphs: ESC & 1 and ESC % 3 (`0x1b 0x25 0x01`) and (`0x1b 0x26 0x03 ...`)
 
@@ -165,13 +167,15 @@ This sets the position directly for the printed character, saving us the need to
 
 ## Cutting it up
 
-Using Claude Code to rapidly prototype I was able to get the above receipts printed by Monday night.
+Using Claude Code to rapidly prototype I was able to get the above receipts printed by Monday night (slop code [here](https://git.lothan.net/joe/ticker-tape) for those curious).
 In some sense this was astonishing progress but in another real sense, this was the easy part.
 
 The hard part is cutting it up.
 If I want to produce ticker-tape in any volume, cutting it by hand is out of the question, it's far too slow and error prone.
 
-I don't have much real, non-software mechanical engineering experience, but I have worked with 3D printing before and I do shave with a safety razor.
+I don't have much mechanical engineering experience, but I have worked with 3D printing before.
+And I do shave with a safety razor.
+
 So on Wednesday night, coming straight from the rental car drop off and with just about 12 hours before the parade, I designed and printed this little jig to guide cutting the receipt into four strips.
 
 {{<figure src="./jig-base.png" alt="3d model of a the jig base" caption="Cutter jig base">}}
@@ -181,9 +185,9 @@ It's really simple, just a bottom cover to hold 3 double-edge razor blades at a 
 {{<figure src="./jig-cover.png" alt="3d model of the jig cover" caption="Cutter jig cover">}}
 
 This was made with [OpenSCAD](https://openscad.org/), a great piece of software that lets you programmitically define 3D shapes.
-Maybe not suprising at this point, but LLMs are also decent at writing working OpenSCAD code for simple projects with tight deadlines.
+Maybe not suprising at this point, but LLMs are also decent at writing working OpenSCAD code to make simple objects.
 
-It took a bit to get the printer at the Recurse Center working and I had to babysit the print (spooling issues), but the base finished beautifully at 1am.
+It took a bit to get the printer at the Recurse Center working and I had to babysit the print (spooling issues), but the base finished beautifully by 1am.
 I set the 3D printer to print the top cover and went home, dead tired after a long day of traveling, unsure if this would work at all tomorrow.
 
 ## Moment of truth
@@ -199,7 +203,7 @@ I ripped off a piece of cardboard laying around the hub and use it as a makeshif
 Less than two hours before the start of the parade, I printed about three receipt paper rolls and cut them up into a big pile of ticker tape.
 
 When cutting up the receipt paper with my homemade jig I found myself much more sympathetic to printer designers.
-Paper is a really difficult material to work with and even when I tried to control for feed angle, removing paper curls, and top cover pressure, pulling the receipt paper through the jig would jam *all the dang time*.
+Paper is a really difficult material to work with and even when I tried to control for feed angle, removing paper curls, and top cover pressure, pulling the receipt paper through the jig would jam up *all the dang time*.
 
 {{<figure src="./full-setup.png" alt="my full setup">}}
 
@@ -208,7 +212,7 @@ But it was still surprisingly fast, in under an hour I had two garbage bags full
 ## Parade
 
 From the Recurse Center, I hopped an R-train heading into Manhattan to meet up with some friends at City Hall.
-But the R was bypassing City Hall so I got off early at Courtlandt street and I stumbled out into the crowd alone with my two bags of ticker-tape.
+But the R was bypassing City Hall so I got off early at Courtlandt street and I stumbled out into a mob scene alone with my two bags of ticker-tape.
 
 {{<figure src="./bags-on-train.png" alt="bags of ticker tape on the train">}}
 
@@ -217,14 +221,14 @@ But the R was bypassing City Hall so I got off early at Courtlandt street and I 
 
 <!-- How wrong I was. -->
 
-Courtlandt street train station connects to the Oculus, the big white transportation hub in the World Trade Center. 
-The crowd just North of the Oculus was so large and at a standstill, at first I thought the parade was coming down Church Street.
+Cortlandt street train station connects to the Oculus, the big white transportation hub in the World Trade Center. 
+At 9:30am, half an hour before the parade started, the crowd just north-east and south-east of the Oculus was so large and at a standstill, at first I thought the parade was coming down Church Street.
 
-When I realized the parade is actually going up Broadway, a block away, I realized my folly.
-The roads heading to Broadway were shoulder-to-shoulder packed with people trying to get a view.
+When I realized the parade is actually going up Broadway, a block away, I realized the extent of my mistake.
+The roads heading to Broadway were shoulder-to-shoulder packed with people trying to get the smallest of views.
 Visions of throwing my tape onto the parade were quickly shattered.
 
-{{<figure src="./throngs.png" alt="throngs of people on church looking towards Broadway">}}
+{{<figure src="./throngs.png" alt="throngs of people on church looking towards Broadway"caption="The crowd at Church and Liberty facing east next to Zuccotti Park">}}
 
 I wandered around for a bit in a daze, unsure what what to do next.
 Then from the throngs of people I hear: "oh that's ticker-tape!"
@@ -238,20 +242,19 @@ Despire her stature, there was still no sightline of Broadway and she was just s
 
 
 Ripping off a fistful of tape to hand to her and almost immediately more people started asking for some. 
-From the shattered vision of throwing ticker-tape on the parade, a new reason to be there emerged: giving a little throw-away souvenir to those too far away to see the actual parade.
+Soon after realizing it was not possible to throw ticker-tape on the parade, I found a new reason to be there: giving a little throw-away souvenir to those too far away to see the actual parade.
 
 {{<figure src="./family-with-tape.png" alt="a family with some ticker-tape ">}}
 
 I wandered the blocks around the Oculus, getting as close as I can to Broadway, stepping back when the crowds were too overwhelming.
-
 It didn't take long, not more than an hour, to give away the two bags of ticker-tape to anyone who recognized it, asked, or saw someone else with a handful.
 
 
 {{<figure src="./women-with-tape.png" alt="three women holding ticker-tape">}}
 
-Budding Knicks fans just learning to say please and thank you, New Yorkers who remember the last Knicks win in 1973, counterfiet t-shirt salesmen, finance bros trying to get to work, I met them all kinds on those corners away from the parade.
+I met all kinds around the Oculus: budding Knicks fans just learning to say please and thank you, New Yorkers who remember the last Knicks win in 1973, counterfiet t-shirt salesmen, finance bros trying to get to work, those looking for a respite from the crowds, and more.
 
-This idea seeemed like a long shot from the beginning, but the fact that a silly little project with a short time frame came together and let me connect with fellow New Yorkers is something I'll forever be grateful for. 
+This idea seeemed like a long shot from the beginning, but the fact that a silly little project with a short time frame came together and let me connect with fellow New Yorkers made me very happy.
 
 Love you New York <3
 
