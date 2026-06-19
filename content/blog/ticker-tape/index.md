@@ -43,10 +43,10 @@ I had a few rough requirements for final product:
 - make as much of it as I could
 
 The problem was I had almost no time to do this.
-The idea came to me Monday afternoon but I had a 24 hour trip from Tuesday noonish to Wednesday early evening.
-I really only had Monday evening, Wednesday evening, and Thursday morning before the parade to do anything.
+The idea came to me Monday afternoon but I had a 24 hour trip from Tuesday til Wednesday early evening.
+I really only had Monday evening, Wednesday evening, and Thursday morning before the parade to work on it.
 
-But I did have some experience printing of long strips of paper.
+But I did have some experience printing long strips of paper.
 At the [Recurse Center](https://recurse.com) last year, my friends and batchmates Alex and Julia setup a receipt printer for anyone to use.
 They made a great interface so it was easy to print arbitrary text, images, or receipt printer (ESC/POS) commands.
 
