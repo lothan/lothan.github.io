@@ -200,7 +200,7 @@ I ripped off a piece of cardboard laying around the hub and use it as a makeshif
 
 {{<figure src="./jig-in-action.png" alt="the jig in action with a makeshift cover" caption="The jig in action with a makeshift cardboard cover">}}
 
-Less than two hours before the start of the parade, I printed about three receipt paper rolls and cut them up into a big pile of ticker tape.
+Less than two hours before the start of the parade, I printed about three receipt paper rolls (thanks for getting more Frank!) and cut them up into a big pile of ticker tape.
 
 When cutting up the receipt paper with my homemade jig I found myself much more sympathetic to printer designers.
 Paper is a really difficult material to work with and even when I tried to control for feed angle, removing paper curls, and top cover pressure, pulling the receipt paper through the jig would jam up *all the dang time*.
