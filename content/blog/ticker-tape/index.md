@@ -209,7 +209,7 @@ Paper is a really difficult material to work with and even when I tried to contr
 
 But it was still surprisingly fast, in under an hour I had two garbage bags full of surprisingly historically accurate ticker-tape. Time to head to the parade.
 
-## Parade
+## Ticker-tape Parade
 
 From the Recurse Center, I hopped an R-train heading into Manhattan to meet up with some friends at City Hall.
 But the R was bypassing City Hall so I got off early at Cortlandt street and I stumbled out into a mob scene alone with my two bags of ticker-tape.
