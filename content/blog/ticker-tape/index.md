@@ -82,7 +82,7 @@ If I use the receipt printer to print stock information vertically in four colum
 ## Getting NYSE Data
 
 The New York Stock Exchange sells access to the data of all transactions it conducts at exorbitant rates, some thosands of dollars per month. 
-My friend Frank pointed me to [Alpaca](https://alpaca.markets/) and their easy to use [Market Data API](https://docs.alpaca.markets/us/docs/about-market-data-api), reselling the data from the exchanges.
+My friend [Frank](https://www.frankchiarulli.com/) pointed me to [Alpaca](https://alpaca.markets/) and their easy to use [Market Data API](https://docs.alpaca.markets/us/docs/about-market-data-api), reselling the data from the exchanges.
 The free tier only gives you 200 API calls a minute, but I just needed to download *some* data only once, so even with the limit it should be more than enough.
 
 Writing a custom trade downloader and limiting my API requests, I was able to download a full day of trading data on NYSE in under an hour for free:
