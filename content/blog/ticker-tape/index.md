@@ -233,21 +233,19 @@ Visions of throwing my tape onto the parade were quickly shattered.
 I wandered around for a bit in a daze, unsure what what to do next.
 Then from the throngs of people I hear: "oh that's ticker-tape!"
 
-I turn and see woman standing quite gracefully on a bollard.
-Despire her stature, there was still no sightline of Broadway and she was just scanning the crowd.
-
 "Oh yes it is! You want some?"
+
+
+Ripping off a fistful of tape and almost immediately more people started asking for some. 
 
 {{<figure src="./woman-on-bollard.png" alt="woman on bollard with ticker tape">}}
 
-
-Ripping off a fistful of tape to hand to her and almost immediately more people started asking for some. 
 Soon after realizing it was not possible to throw ticker-tape on the parade, I found a new reason to be there: giving a little throw-away souvenir to those too far away to see the actual parade.
 
 {{<figure src="./family-with-tape.png" alt="a family with some ticker-tape ">}}
 
 I wandered the blocks around the Oculus, getting as close as I can to Broadway, stepping back when the crowds were too overwhelming.
-It didn't take long, not more than an hour, to give away the two bags of ticker-tape to anyone who recognized it, asked, or saw someone else with a handful.
+It didn't more than an hour to give away the two bags of ticker-tape to anyone who recognized it, asked, or saw someone else with a handful.
 
 
 {{<figure src="./women-with-tape.png" alt="three women holding ticker-tape">}}
