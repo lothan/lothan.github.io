@@ -212,7 +212,7 @@ But it was still surprisingly fast, in under an hour I had two garbage bags full
 ## Parade
 
 From the Recurse Center, I hopped an R-train heading into Manhattan to meet up with some friends at City Hall.
-But the R was bypassing City Hall so I got off early at Courtlandt street and I stumbled out into a mob scene alone with my two bags of ticker-tape.
+But the R was bypassing City Hall so I got off early at Cortlandt street and I stumbled out into a mob scene alone with my two bags of ticker-tape.
 
 {{<figure src="./bags-on-train.png" alt="bags of ticker tape on the train">}}
 
