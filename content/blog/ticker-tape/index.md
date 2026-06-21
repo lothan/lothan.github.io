@@ -245,14 +245,14 @@ Soon after realizing it was not possible to throw ticker-tape on the parade, I f
 {{<figure src="./family-with-tape.png" alt="a family with some ticker-tape ">}}
 
 I wandered the blocks around the Oculus, getting as close as I can to Broadway, stepping back when the crowds were too overwhelming.
-It didn't more than an hour to give away the two bags of ticker-tape to anyone who recognized it, asked, or saw someone else with a handful.
+It didn't take more than an hour to give away the two bags of ticker-tape to anyone who recognized it, asked, or saw someone else with a handful.
 
 
 {{<figure src="./women-with-tape.png" alt="three women holding ticker-tape">}}
 
 I met all kinds around the Oculus: budding Knicks fans just learning to say please and thank you, New Yorkers who remember the last Knicks win in 1973, counterfiet t-shirt salesmen, finance bros trying to get to work, those looking for a respite from the crowds, and more.
 
-This idea seeemed like a long shot from the beginning, but the fact that a silly little project with a short time frame came together and let me connect with fellow New Yorkers made me very happy.
+This idea seemed like a long shot from the beginning, but the fact that a silly little project with a short time frame came together and let me connect with fellow New Yorkers made me very happy.
 
 Love you New York <3
 
