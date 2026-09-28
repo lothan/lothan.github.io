@@ -4,8 +4,8 @@ title: "Home"
 
 Hi, I'm Joe, welcome to my site!
 
-I'm a Security Researcher at Margin Research and I live in NYC.
-I'm interested in software (in)security broadly and Linux, Android, and various embedded systems in particular.
+I'm a Research Engineer at [Tinfoil](https://tinfoil.sh) and I live in SF.
+I'm interested in software (in)security and digital privacy broadly - Linux and embedded systems in particular.
 Outside of work I enjoy reading, birding, and riding my bike. 
 
 On my little corner of the world wide web you can find:
