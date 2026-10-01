@@ -59,4 +59,7 @@ buttons:
     alt: "milk tea now!"
   - image: "88x31/valid-html5.gif"
     alt: "valid html5"
+  - image: "88x31/tinfoil.png"
+    alt: "Tinfoil Private AI"
+    url: "https://tinfoil.sh"
 ---
